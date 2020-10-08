@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 
 import Navigation from '../components/Navigation';
 
-import { Box, Text } from '../styles';
+import { Box, Paragraph, Text, Title } from '../styles';
 
 export const Home = () => (
   <Fragment>
@@ -12,12 +12,14 @@ export const Home = () => (
     </Helmet>
     <Box>
       <Text>
-        hi
-        <br /><br />
-        this is supposed to look good
+        <Title>hello</Title>
         <br />
-        maybe in the future
-        <br /><br />
+        <Paragraph>
+          i'm a web dev
+          <br /><br />
+          nothing else to say
+        </Paragraph>
+        <br />
         <Navigation />
       </Text>
     </Box>

@@ -9,16 +9,11 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export const Anchor = styled(Link)`
-  color: #000000;
-  margin-right: 12px;
+export const Anchor = styled.a`
+  color: #ffffff;
   
   &:hover {
-    color: #000000;
-  }
-  
-  &:last-child {
-    margin-right: 0;
+    color: #ffffff;
   }
 `;
 
@@ -34,14 +29,40 @@ export const Box = styled.div`
 `;
 
 export const Mail = styled.a`
+  color: #ffffff;
+  
+  &:hover {
+    color: #ffffff;
+  }
+`;
+
+export const NavigationLink = styled(Link)`
   color: #000000;
+  margin-right: 12px;
   
   &:hover {
     color: #000000;
   }
+  
+  &:last-child {
+    margin-right: 0;
+  }
+`;
+
+export const Paragraph = styled.div`
+  padding: 15px 20px;
+  background-color: #222222;
+  color: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const Text = styled.div`
   font-family: 'Consolas', sans-serif;
   font-size: 16px;
+`;
+
+export const Title = styled.div`
+  border-bottom: 4px solid #008cff;
+  width: fit-content;
 `;

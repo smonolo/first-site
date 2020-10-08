@@ -3,17 +3,21 @@ import { Helmet } from 'react-helmet';
 
 import Navigation from '../components/Navigation';
 
-import { Box, Text } from '../styles';
+import { Box, Paragraph, Text, Title } from '../styles';
 
 const NotFound = () => (
   <Fragment>
     <Helmet>
-      <title>nothing here</title>
+      <title>not found</title>
     </Helmet>
     <Box>
       <Text>
-        idk what you are looking for, but it's not here
-        <br /><br />
+        <Title>not found</Title>
+        <br />
+        <Paragraph>
+          idk what you are looking for, but it's not here
+        </Paragraph>
+        <br />
         <Navigation />
       </Text>
     </Box>

@@ -3,17 +3,26 @@ import { Helmet } from 'react-helmet';
 
 import Navigation from '../components/Navigation';
 
-import { Box, Text } from '../styles';
+import { Anchor, Box, Paragraph, Text, Title } from '../styles';
 
 const About = () => (
   <Fragment>
     <Helmet>
-      <title>about me</title>
+      <title>about</title>
     </Helmet>
     <Box>
       <Text>
-        frontend dev, i guess
-        <br /><br />
+        <Title>about</Title>
+        <br />
+        <Paragraph>
+          frontend dev
+          <br /><br />
+          i work at&nbsp;
+          <Anchor href='https://www.eslgaming.com' target='_blank'>esl</Anchor>
+          &nbsp;for&nbsp;
+          <Anchor href='https://www.badlion.net' target='_blank'>badlion</Anchor>
+        </Paragraph>
+        <br />
         <Navigation />
       </Text>
     </Box>

@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 
-import { Anchor } from '../styles';
+import { NavigationLink } from '../styles';
 
 const Navigation = () => (
   <Fragment>
-    <Anchor to='/'>home</Anchor>
-    <Anchor to='/about'>about</Anchor>
-    <Anchor to='/contact'>contact</Anchor>
+    <NavigationLink to='/'>home</NavigationLink>
+    <NavigationLink to='/about'>about</NavigationLink>
+    <NavigationLink to='/contact'>contact</NavigationLink>
   </Fragment>
 );
 
