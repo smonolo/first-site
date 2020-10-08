@@ -3,20 +3,18 @@ import { Helmet } from 'react-helmet';
 
 import Navigation from '../components/Navigation';
 
-import { Box, Text } from '../styles';
+import { Box, Mail, Text } from '../styles';
 
-export const Home = () => (
+const Contact = () => (
   <Fragment>
     <Helmet>
-      <title>hello</title>
+      <title>contact me</title>
     </Helmet>
     <Box>
       <Text>
-        hi
+        just send me an email
         <br /><br />
-        this is supposed to look good
-        <br />
-        maybe in the future
+        <Mail href='mailto:hi@stemon.me'>hi@stemon.me</Mail>
         <br /><br />
         <Navigation />
       </Text>
@@ -24,4 +22,4 @@ export const Home = () => (
   </Fragment>
 );
 
-export default Home;
+export default Contact;

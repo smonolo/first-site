@@ -1,7 +1,9 @@
 import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
-import { Box, Text, Anchor } from './Home';
+import Navigation from '../components/Navigation';
+
+import { Box, Text } from '../styles';
 
 const About = () => (
   <Fragment>
@@ -12,7 +14,7 @@ const About = () => (
       <Text>
         frontend dev, i guess
         <br /><br />
-        <Anchor to='/'>home</Anchor>
+        <Navigation />
       </Text>
     </Box>
   </Fragment>
