@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
 const Home = () => (
-  <React.Fragment>
+  <Fragment>
     <Helmet>
       <title>hello</title>
     </Helmet>
@@ -10,7 +10,7 @@ const Home = () => (
     <div>this is supposed to look good</div>
     <div>maybe in the future</div>
     <div>bye</div>
-  </React.Fragment>
+  </Fragment>
 );
 
 export default Home;
