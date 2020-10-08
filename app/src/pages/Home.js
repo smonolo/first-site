@@ -17,7 +17,7 @@ export const Home = () => (
         <Paragraph>
           i'm a web dev
           <br /><br />
-          nothing else to say
+          that's it
         </Paragraph>
         <br />
         <Navigation />
