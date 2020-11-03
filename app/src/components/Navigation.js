@@ -1,12 +1,14 @@
 import React, { Fragment } from 'react';
 
+import { navigation } from '../constants';
+
 import { NavigationLink } from '../styles';
 
 const Navigation = () => (
   <Fragment>
-    <NavigationLink to='/'>home</NavigationLink>
-    <NavigationLink to='/about'>about</NavigationLink>
-    <NavigationLink to='/contact'>contact</NavigationLink>
+    {navigation.map(item => (
+      <NavigationLink to={item.path}>{item.text}</NavigationLink>
+    ))}
   </Fragment>
 );
 

@@ -1,29 +1,35 @@
 import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
+import { titles } from '../constants';
+
 import Navigation from '../components/Navigation';
 
 import { Box, Paragraph, Text, Title } from '../styles';
 
-export const Home = () => (
-  <Fragment>
-    <Helmet>
-      <title>hello</title>
-    </Helmet>
-    <Box>
-      <Text>
-        <Title>hello</Title>
-        <br />
-        <Paragraph>
-          i'm a web dev
-          <br /><br />
-          that's it
-        </Paragraph>
-        <br />
-        <Navigation />
-      </Text>
-    </Box>
-  </Fragment>
-);
+export const Home = () => {
+  const title = titles.home;
+
+  return (
+    <Fragment>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <Box>
+        <Text>
+          <Title>{title}</Title>
+          <br />
+          <Paragraph>
+            i'm a web dev
+            <br /><br />
+            that's it
+          </Paragraph>
+          <br />
+          <Navigation />
+        </Text>
+      </Box>
+    </Fragment>
+  );
+};
 
 export default Home;
