@@ -7,8 +7,8 @@ import Navigation from '../components/Navigation';
 
 import { Box, Paragraph, Text, Title } from '../styles';
 
-export const Home = () => {
-  const title = titles.home;
+const NotFound: Function = () => {
+  const title: string = titles.notFound;
 
   return (
     <Fragment>
@@ -20,9 +20,7 @@ export const Home = () => {
           <Title>{title}</Title>
           <br />
           <Paragraph>
-            i'm a web dev
-            <br /><br />
-            that's it
+            idk what you are looking for, but it's not here
           </Paragraph>
           <br />
           <Navigation />
@@ -32,4 +30,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default NotFound;

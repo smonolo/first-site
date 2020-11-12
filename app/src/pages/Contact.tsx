@@ -5,10 +5,10 @@ import { titles } from '../constants';
 
 import Navigation from '../components/Navigation';
 
-import { Box, Paragraph, Text, Title } from '../styles';
+import { Box, Mail, Paragraph, Text, Title } from '../styles';
 
-const NotFound = () => {
-  const title = titles.notFound;
+const Contact: Function = () => {
+  const title: string = titles.contact;
 
   return (
     <Fragment>
@@ -20,7 +20,13 @@ const NotFound = () => {
           <Title>{title}</Title>
           <br />
           <Paragraph>
-            idk what you are looking for, but it's not here
+            send me an email
+            <br /><br />
+            <Mail
+              href='mailto:hi@stemon.me'
+            >
+              hi@stemon.me
+            </Mail>
           </Paragraph>
           <br />
           <Navigation />
@@ -30,4 +36,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default Contact;

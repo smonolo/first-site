@@ -5,10 +5,10 @@ import { titles } from '../constants';
 
 import Navigation from '../components/Navigation';
 
-import { Box, Mail, Paragraph, Text, Title } from '../styles';
+import { Box, Paragraph, Text, Title } from '../styles';
 
-const Contact = () => {
-  const title = titles.contact;
+export const Home: Function = () => {
+  const title: string = titles.home;
 
   return (
     <Fragment>
@@ -20,9 +20,9 @@ const Contact = () => {
           <Title>{title}</Title>
           <br />
           <Paragraph>
-            send me an email
+            i'm a web dev
             <br /><br />
-            <Mail href='mailto:hi@stemon.me'>hi@stemon.me</Mail>
+            that's it
           </Paragraph>
           <br />
           <Navigation />
@@ -32,4 +32,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default Home;

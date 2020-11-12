@@ -7,8 +7,8 @@ import Navigation from '../components/Navigation';
 
 import { Anchor, Box, Paragraph, Text, Title } from '../styles';
 
-const About = () => {
-  const title = titles.about;
+const About: Function = () => {
+  const title: string = titles.about;
 
   return (
     <Fragment>
@@ -23,9 +23,19 @@ const About = () => {
             frontend dev
             <br /><br />
             i work at&nbsp;
-            <Anchor href='https://www.eslgaming.com' target='_blank'>esl</Anchor>
+            <Anchor
+              href='https://www.eslgaming.com'
+              target='_blank'
+            >
+              esl
+            </Anchor>
             &nbsp;for&nbsp;
-            <Anchor href='https://www.badlion.net' target='_blank'>badlion</Anchor>
+            <Anchor
+              href='https://www.badlion.net'
+              target='_blank'
+            >
+              badlion
+            </Anchor>
           </Paragraph>
           <br />
           <Navigation />
