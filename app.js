@@ -73,5 +73,5 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
 });
 
-app.listen(5034);
+app.listen(production ? 3000 : 5034);
 console.log('Connected');
