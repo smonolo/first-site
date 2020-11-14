@@ -41,6 +41,8 @@ const Navigation: FunctionComponent<{ dispatch: Dispatch }> = ({ dispatch }) => 
         });
       } else {
         localStorage.removeItem('jwt');
+
+        dispatch({ type: 'LOGOUT' });
       }
     };
 
