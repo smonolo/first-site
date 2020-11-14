@@ -1,6 +1,8 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import { Link } from 'react-router-dom';
 
+const mainColor: string = '#008cff';
+
 export const GlobalStyle = createGlobalStyle`
   body {
     user-select: none;
@@ -26,6 +28,46 @@ export const Box = styled.div`
   background-color: #eeeeee;
   max-width: 90%;
   box-sizing: border-box;
+`;
+
+export const Button = styled.button`
+  padding: 4px 8px;
+  width: fit-content;
+  box-sizing: border-box;
+  max-width: 100%;
+  background-color: ${mainColor};
+  border: none;
+  color: #ffffff;
+  font-family: 'Consolas', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  
+  &:disabled,
+  &[disabled] {
+    background-color: #bbbbbb;
+    cursor: context-menu;
+  }
+`;
+
+export const Error = styled.div`
+  padding: 6px 10px;
+  width: 100%;
+  background-color: #ff0000;
+  color: #ffffff;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+`;
+
+export const Input = styled.input`
+  padding: 4px 8px;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: #ffffff;
+  border: none;
+  color: #000000;
+  font-family: 'Consolas', sans-serif;
+  font-size: 16px;
+  margin-top: 5px;
 `;
 
 export const Mail = styled.a`
@@ -63,6 +105,6 @@ export const Text = styled.div`
 `;
 
 export const Title = styled.div`
-  border-bottom: 4px solid #008cff;
+  border-bottom: 4px solid ${mainColor};
   width: fit-content;
 `;

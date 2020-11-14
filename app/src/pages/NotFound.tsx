@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, FunctionComponent } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { titles } from '../constants';
@@ -7,7 +7,7 @@ import Navigation from '../components/Navigation';
 
 import { Box, Paragraph, Text, Title } from '../styles';
 
-const NotFound: Function = () => {
+const NotFound: FunctionComponent = () => {
   const title: string = titles.notFound;
 
   return (

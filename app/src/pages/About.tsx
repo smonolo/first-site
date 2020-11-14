@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, FunctionComponent } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { titles } from '../constants';
@@ -7,7 +7,7 @@ import Navigation from '../components/Navigation';
 
 import { Anchor, Box, Paragraph, Text, Title } from '../styles';
 
-const About: Function = () => {
+const About: FunctionComponent = () => {
   const title: string = titles.about;
 
   return (
