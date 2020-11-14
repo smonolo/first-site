@@ -48,6 +48,10 @@ const Navigation: FunctionComponent<{ dispatch: Dispatch }> = ({ dispatch }) => 
 
     if (localStorage.getItem('jwt')) {
       verifyJwt();
+    } else if (logged) {
+      localStorage.removeItem('jwt');
+
+      dispatch({ type: 'LOGOUT' });
     }
   });
 
