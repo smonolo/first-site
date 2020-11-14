@@ -13,15 +13,19 @@ let creds = {};
 if (production) {
   fs.readFile('/home/stemon-me/creds.json', 'utf8', (err, data) => {
     if (data && !err) {
-       creds = { username, password } = JSON.parse(data);
+      const { username, password } = JSON.parse(data);
+
+      creds = { username, password };
     } else {
       console.log('Could not read creds.json file');
     }
   });
+} else {
+  creds = {
+    username: 'dev',
+    password: '34c6fceca75e456f25e7e99531e2425c6c1de443'
+  };
 }
-
-const USERNAME = production ? creds.username : 'dev';
-const PASSWORD = production ? creds.password : '34c6fceca75e456f25e7e99531e2425c6c1de443';
 
 app.use(express.static(path.join(__dirname, 'app', 'build')));
 app.use(express.urlencoded({ extended: false }));
@@ -37,8 +41,8 @@ app.use((req, res, next) => {
 app.post('/login', (req, res) => {
   const hash = sha1(req.body.password);
 
-  if (req.body.username === USERNAME && hash === PASSWORD) {
-    const jwtContent = { username: USERNAME };
+  if (req.body.username === creds.username && hash === creds.password) {
+    const jwtContent = { username: creds.username };
     const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);
 
     res.json({
