@@ -23,7 +23,7 @@ if (production) {
 const USERNAME = production ? creds.username : 'dev';
 const PASSWORD = production ? creds.password : '34c6fceca75e456f25e7e99531e2425c6c1de443';
 
-app.use(express.static(path.join(__dirname, 'client', 'build')));
+app.use(express.static(path.join(__dirname, 'app', 'build')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -70,7 +70,7 @@ app.post('/verify', (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'app', 'build', 'index.html'));
 });
 
 app.listen(57483);
