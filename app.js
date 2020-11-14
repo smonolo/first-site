@@ -11,7 +11,7 @@ const production = !process.argv.includes('--dev');
 let creds = {};
 
 if (production) {
-  fs.readFile('/home/stemon-me/creds.json', 'uf8', (err, data) => {
+  fs.readFile('/home/stemon-me/creds.json', 'utf8', (err, data) => {
     if (data && !err) {
        creds = { username, password } = JSON.parse(data);
     } else {
