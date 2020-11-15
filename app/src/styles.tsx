@@ -140,14 +140,9 @@ export const UserNavigationLink = styled(Link)`
   }
 `;
 
-export const UserNavigationName = styled(Link)`
+export const UserNavigationName = styled.span`
   color: #000000;
-  text-decoration: none;
   float: right;
   background-color: #ffffff;
   padding: 0 6px;
-  
-  &:hover {
-    color: #000000;
-  }
 `;

@@ -81,7 +81,10 @@ class Navigation extends Component<Props, State> {
                   admin
                 </UserNavigationLink>
               )}
-              <UserNavigationName to='/profile'>
+              <UserNavigationLink to='/profile'>
+                profile
+              </UserNavigationLink>
+              <UserNavigationName>
                 {this.props.username}
               </UserNavigationName>
             </UserNavigation>
