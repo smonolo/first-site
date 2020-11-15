@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Redirect } from 'react-router';
 
 import { titles } from '../constants';
 
@@ -12,6 +11,7 @@ import SiteAdmins from '../components/admin/SiteAdmins';
 import Users from '../components/admin/Users';
 
 import Base from '../components/Base';
+import Loading from '../components/Loading';
 
 interface Props {
   readonly logged: boolean;
@@ -36,10 +36,18 @@ class Admin extends Component<Props, State> {
   };
 
   componentDidMount() {
+    if (!this.props.logged || !this.props.siteAdmin) {
+      return window.location.assign('/');
+    }
+
     this.props.fetchUsers();
   };
 
   componentDidUpdate(nextProps: Readonly<Props>) {
+    if (!this.props.logged || !this.props.siteAdmin) {
+      return window.location.assign('/');
+    }
+
     if (nextProps.users !== this.props.users) {
       this.setState({
         loading: false
@@ -49,7 +57,7 @@ class Admin extends Component<Props, State> {
 
   render() {
     if (!this.props.logged || !this.props.siteAdmin) {
-      return <Redirect to='/' />;
+      return <Loading />;
     }
 
     return (

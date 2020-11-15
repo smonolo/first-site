@@ -1,10 +1,9 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { mainColor } from './constants';
+const mainColor: string = '#008cff';
 
 const theme = localStorage.getItem('theme');
-
 const light = !theme || theme !== 'dark';
 
 export const GlobalStyle = createGlobalStyle`
@@ -123,6 +122,23 @@ export const Paragraph = styled.div`
   color: #ffffff;
   width: 100%;
   box-sizing: border-box;
+`;
+
+export const Search = styled.div`
+  padding: 10px 15px;
+  background-color: ${light ? '#ffffff' : '#111111'};
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+export const SearchInput = styled(Input)`
+  margin-top: 0;
+  background-color: #333333;
+  color: #ffffff;
+  
+  &::placeholder {
+    color: #aaaaaa;
+  }
 `;
 
 export const Text = styled.div`

@@ -2,13 +2,13 @@ import React, { createRef, Component } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Redirect } from 'react-router';
 
 import { titles } from '../constants';
 
 import { AuthState, isLogged, login, LoginResponse } from '../redux/auth';
 
 import Base from '../components/Base';
+import Loading from '../components/Loading';
 
 import { Button, Error, Input, Paragraph } from '../styles';
 
@@ -41,6 +41,18 @@ class Login extends Component<Props, State> {
         disabled: false
       }
     };
+  };
+
+  componentDidMount() {
+    if (this.props.logged) {
+      window.location.assign('/');
+    }
+  };
+
+  componentDidUpdate() {
+    if (this.props.logged) {
+      window.location.assign('/');
+    }
   };
 
   setFormData(error: string) {
@@ -90,7 +102,7 @@ class Login extends Component<Props, State> {
     this.username.value = '';
     this.password.value = '';
 
-    const request: AxiosResponse = await axios.post('/auth/login', {
+    const request: AxiosResponse = await axios.post('/api/auth/login', {
       auth: 'authLogin',
       type: 'login',
       payload: {
@@ -115,7 +127,7 @@ class Login extends Component<Props, State> {
 
   render() {
     if (this.props.logged) {
-      return <Redirect to='/' />;
+      return <Loading />;
     }
 
     return (

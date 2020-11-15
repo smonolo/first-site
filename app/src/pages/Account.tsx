@@ -1,7 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Redirect } from 'react-router';
 import axios, { AxiosResponse } from 'axios';
 
 import { titles } from '../constants';
@@ -9,6 +8,7 @@ import { titles } from '../constants';
 import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 
 import Base from '../components/Base';
+import Loading from '../components/Loading';
 
 import { AdminBadge, Error, Input, Paragraph, ButtonRed } from '../styles';
 
@@ -45,6 +45,18 @@ class Account extends Component<Props, State> {
         disabled: false
       }
     };
+  };
+
+  componentDidMount() {
+    if (!this.props.logged) {
+      window.location.assign('/');
+    }
+  };
+
+  componentDidUpdate() {
+    if (!this.props.logged) {
+      window.location.assign('/');
+    }
   };
 
   setDeleteFormData(deleteError: string) {
@@ -92,7 +104,7 @@ class Account extends Component<Props, State> {
 
     this.deleteUsername.value = '';
 
-    const request: AxiosResponse = await axios.post('/auth/account', {
+    const request: AxiosResponse = await axios.post('/api/auth/account', {
       auth: 'authAccount',
       type: 'deleteAccount',
       payload: {
@@ -114,7 +126,7 @@ class Account extends Component<Props, State> {
 
   render() {
     if (!this.props.logged) {
-      return <Redirect to='/' />;
+      return <Loading />;
     }
 
     return (

@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
 import Navigation from './navigation/Navigation';
+import Search from './Search';
 
 import { Box, Text, Title } from '../styles';
 
@@ -18,6 +19,8 @@ export default ({ title, children }: Props) => {
       </Helmet>
       <Box>
         <Text>
+          <Search />
+          <br />
           <Title>{title}</Title>
           <br />
           {children}

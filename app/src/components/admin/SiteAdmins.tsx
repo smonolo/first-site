@@ -86,7 +86,7 @@ class SiteAdmins extends Component<Props, State> {
 
     this.assignUsername.value = '';
 
-    const request: AxiosResponse = await axios.post('/admin/site-admins', {
+    const request: AxiosResponse = await axios.post('/api/admin/site-admins', {
       auth: 'adminSiteAdmins',
       type: 'assignSiteAdmin',
       payload: {
@@ -127,7 +127,7 @@ class SiteAdmins extends Component<Props, State> {
 
     this.revokeUsername.value = '';
 
-    const request: AxiosResponse = await axios.post('/admin/site-admins', {
+    const request: AxiosResponse = await axios.post('/api/admin/site-admins', {
       auth: 'adminSiteAdmins',
       type: 'revokeSiteAdmin',
       payload: {

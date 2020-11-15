@@ -27,13 +27,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/auth/login', require('./routes/auth/login'));
-app.use('/auth/register', require('./routes/auth/register'));
-app.use('/auth/verify', require('./routes/auth/verify'));
-app.use('/auth/account', require('./routes/auth/account'));
+app.use('/api/auth/login', require('./routes/api/auth/login'));
+app.use('/api/auth/register', require('./routes/api/auth/register'));
+app.use('/api/auth/verify', require('./routes/api/auth/verify'));
+app.use('/api/auth/account', require('./routes/api/auth/account'));
 
-app.use('/admin/users', require('./routes/admin/users'));
-app.use('/admin/site-admins', require('./routes/admin/site_admins'));
+app.use('/api/admin/users', require('./routes/api/admin/users'));
+app.use('/api/admin/site-admins', require('./routes/api/admin/site_admins'));
+
+app.use('/api/profile', require('./routes/api/profile'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app', 'build', 'index.html'));

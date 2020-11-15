@@ -68,7 +68,7 @@ class Users extends Component<Props, State> {
 
     this.deleteUsername.value = '';
 
-    const request: AxiosResponse = await axios.post('/admin/users', {
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
       auth: 'adminUsers',
       type: 'deleteUser',
       payload: {

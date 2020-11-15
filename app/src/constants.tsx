@@ -1,4 +1,13 @@
-// readonly interfaces & types
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Admin from './pages/Admin';
+import Account from './pages/Account';
+import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
+
 interface Titles {
   readonly home: string;
   readonly about: string;
@@ -17,7 +26,14 @@ export interface NavigationItem {
 
 type Navigation = Array<NavigationItem>;
 
-// exports
+export interface Page {
+  readonly exact: boolean;
+  readonly path: string;
+  readonly component: any;
+}
+
+type Pages = Array<Page>;
+
 export const titles: Titles = {
   home: 'home',
   about: 'about',
@@ -44,4 +60,14 @@ export const navigation: Navigation = [
   }
 ];
 
-export const mainColor: string = '#008cff';
+export const pages: Pages = [
+  { exact: true, path: '/', component: Home },
+  { exact: true, path: '/about', component: About },
+  { exact: true, path: '/contact', component: Contact },
+  { exact: true, path: '/login', component: Login },
+  { exact: true, path: '/register', component: Register },
+  { exact: true, path: '/admin', component: Admin },
+  { exact: true, path: '/account', component: Account },
+  { exact: true, path: '/profile/:username', component: Profile },
+  { exact: true, path: '', component: NotFound }
+];
