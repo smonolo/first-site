@@ -28,7 +28,7 @@ export const Anchor = styled.a`
 
 export const Box = styled.div`
   padding: 50px 70px;
-  width: 500px;
+  width: 700px;
   margin: 25vh auto;
   background-color: #eeeeee;
   max-width: 90%;
