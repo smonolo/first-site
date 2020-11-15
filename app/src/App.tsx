@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React  from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Home from './pages/Home';
@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound';
 
 import { GlobalStyle } from './styles';
 
+// all values are readonly as they should not be edited
 interface Page {
   readonly exact: boolean;
   readonly path: string;
@@ -22,10 +23,10 @@ const pages: Pages = [
   { exact: true, path: '/about', component: About },
   { exact: true, path: '/contact', component: Contact },
   { exact: true, path: '/login', component: Login },
-  { exact: true, path: '', component: NotFound },
+  { exact: true, path: '', component: NotFound }
 ];
 
-const App: FunctionComponent = () => (
+export default () => (
   <BrowserRouter>
     <GlobalStyle />
     <Switch>
@@ -40,5 +41,3 @@ const App: FunctionComponent = () => (
     </Switch>
   </BrowserRouter>
 );
-
-export default App;

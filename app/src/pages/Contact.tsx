@@ -1,4 +1,4 @@
-import React, { Fragment, FunctionComponent } from 'react';
+import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { titles } from '../constants';
@@ -7,7 +7,7 @@ import Navigation from '../components/Navigation';
 
 import { Box, Mail, Paragraph, Text, Title } from '../styles';
 
-const Contact: FunctionComponent = () => {
+export default () => {
   const title: string = titles.contact;
 
   return (
@@ -35,5 +35,3 @@ const Contact: FunctionComponent = () => {
     </Fragment>
   );
 };
-
-export default Contact;

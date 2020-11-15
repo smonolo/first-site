@@ -1,16 +1,19 @@
-import React, { FunctionComponent, Fragment, Ref, useRef, useState } from 'react';
+import React, { Fragment, createRef, Component } from 'react';
 import { Helmet } from 'react-helmet';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 import { titles } from '../constants';
-import { store, getAuth, Dispatch, State } from '../store';
+
+import { store, StoreState } from '../redux/store';
+import { getAuth, AuthDispatch } from '../redux/auth';
 
 import Navigation from '../components/Navigation';
 
 import { Box, Button, Error, Input, Paragraph, Text, Title } from '../styles';
 
+// interface is readonly
 export interface RequestData {
   readonly success: boolean;
   readonly payload?: {
@@ -19,45 +22,72 @@ export interface RequestData {
   };
 }
 
-const mapStateToProps = (state: State) => {
-  return { ...state };
+type Props = {
+  dispatch: AuthDispatch
 };
 
-const Login: FunctionComponent<{ dispatch: Dispatch }> = ({ dispatch }) => {
-  const title: string = titles.login;
+type State = {
+  logged: boolean,
+  error: string,
+  button: {
+    text: string,
+    disabled: boolean
+  }
+};
 
-  const [error, setError] = useState('');
-  const [button, setButton] = useState({ text: 'login', disabled: false });
+class Login extends Component<Props, State> {
+  private title: string = titles.login;
 
-  const username: Ref<any> = useRef(null);
-  const password: Ref<any> = useRef(null);
+  private username: any = createRef();
+  private password: any = createRef();
 
-  const { logged } = getAuth(store.getState());
+  constructor(props: Props) {
+    super(props);
 
-  const setFormData: Function = (error: string) => {
-    setError(error);
-    setButton({ text: 'login', disabled: false });
+    this.state = {
+      logged: getAuth(store.getState()).logged,
+      error: '',
+      button: {
+        text: 'login',
+        disabled: false
+      }
+    };
   };
 
-  const login: Function = async (event: MouseEvent) => {
+  setFormData(error: string) {
+    this.setState({
+      error,
+      button: {
+        text: 'login',
+        disabled: false
+      }
+    });
+  };
+
+  async login(event: any) {
     event.preventDefault();
 
-    setError('');
-    setButton({ text: 'loading', disabled: true });
+    this.setState({
+      error: '',
+      button: {
+        text: 'loading',
+        disabled: true
+      }
+    });
 
-    const usernameValue: string = username.current.value;
-    const passwordValue: string = password.current.value;
+    const usernameValue: string = this.username.value;
+    const passwordValue: string = this.password.value;
 
     if (!usernameValue) {
-      return setFormData('username is missing');
+      return this.setFormData('username is missing');
     }
 
     if (!passwordValue) {
-      return setFormData('password is missing');
+      return this.setFormData('password is missing');
     }
 
-    username.current.value = '';
-    password.current.value = '';
+    this.username.value = '';
+    this.password.value = '';
 
     const request: AxiosResponse = await axios.post('/login', {
       username: usernameValue,
@@ -69,69 +99,75 @@ const Login: FunctionComponent<{ dispatch: Dispatch }> = ({ dispatch }) => {
     if (data.success && data.payload) {
       localStorage.setItem('jwt', data.payload.jwt);
 
-      setFormData('');
+      this.setFormData('');
 
-      dispatch({
+      this.props.dispatch({
         type: 'LOGIN',
         payload: {
           logged: true,
           ...data.payload
         }
       });
+
+      this.setState({ logged: true });
     } else {
-      setFormData('invalid username or password');
+      this.setFormData('invalid username or password');
     }
   };
 
-  if (logged) {
-    return <Redirect to='/' />;
-  }
+  render() {
+    if (this.state.logged) {
+      return <Redirect to='/' />;
+    }
 
-  return (
-    <Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <Box>
-        <Text>
-          <Title>{title}</Title>
-          <br />
-          <Paragraph>
-            {error && <Error>{error}</Error>}
-            <form>
-              username
-              <br />
-              <Input
-                type='text'
-                name='username'
-                ref={username}
-                required
-              />
-              <br /><br />
-              password
-              <br />
-              <Input
-                type='password'
-                name='password'
-                ref={password}
-                required
-              />
-              <br /><br />
-              <Button
-                type='submit'
-                disabled={button.disabled}
-                onClick={event => login(event)}
-              >
-                {button.text}
-              </Button>
-            </form>
-          </Paragraph>
-          <br />
-          <Navigation />
-        </Text>
-      </Box>
-    </Fragment>
-  )
-};
+    return (
+      <Fragment>
+        <Helmet>
+          <title>{this.title}</title>
+        </Helmet>
+        <Box>
+          <Text>
+            <Title>{this.title}</Title>
+            <br />
+            <Paragraph>
+              {this.state.error && <Error>{this.state.error}</Error>}
+              <form>
+                username
+                <br />
+                <Input
+                  type='text'
+                  name='username'
+                  ref={(input: HTMLInputElement) => this.username = input}
+                  required
+                />
+                <br /><br />
+                password
+                <br />
+                <Input
+                  type='password'
+                  name='password'
+                  ref={(input: HTMLInputElement) => this.password = input}
+                  required
+                />
+                <br /><br />
+                <Button
+                  type='submit'
+                  disabled={this.state.button.disabled}
+                  onClick={event => this.login(event)}
+                >
+                  {this.state.button.text}
+                </Button>
+              </form>
+            </Paragraph>
+            <br />
+            <Navigation />
+          </Text>
+        </Box>
+      </Fragment>
+    );
+  };
+}
+
+const mapStateToProps = (state: StoreState) => ({ ...state });
 
 export default connect(mapStateToProps)(Login);

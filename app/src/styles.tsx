@@ -1,7 +1,7 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const mainColor: string = '#008cff';
+import { mainColor } from './constants';
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -81,6 +81,7 @@ export const Mail = styled.a`
 export const NavigationLink = styled(Link)`
   color: #000000;
   margin-right: 12px;
+  text-decoration: none;
   
   &:hover {
     color: #000000;
@@ -88,6 +89,7 @@ export const NavigationLink = styled(Link)`
   
   &:last-child {
     margin-right: 0;
+    float: right;
   }
 `;
 

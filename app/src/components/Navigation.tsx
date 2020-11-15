@@ -1,89 +1,107 @@
-import React, { Fragment, FunctionComponent, useEffect } from 'react';
+import React, { Component, Fragment } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
 
 import { navigation, NavigationItem } from '../constants';
-import { store, getAuth, Dispatch, State } from '../store';
+
+import { store, StoreState } from '../redux/store';
+import { getAuth, AuthDispatch } from '../redux/auth';
 import { RequestData } from '../pages/Login';
 
 import { NavigationLink } from '../styles';
 
-const mapStateToProps = (state: State) => {
-  return { ...state };
+type Props = {
+  dispatch: AuthDispatch;
+}
+
+type State = {
+  logged: boolean
 };
 
-const Navigation: FunctionComponent<{ dispatch: Dispatch }> = ({ dispatch }) => {
-  const { logged } = getAuth(store.getState());
+class Navigation extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
 
-  const logout: Function = () => {
-    if (logged) {
-      localStorage.removeItem('jwt');
+    this.state = {
+      logged: getAuth(store.getState()).logged
+    };
+  };
 
-      dispatch({ type: 'LOGOUT' });
+  componentDidMount() {
+    if (localStorage.getItem('jwt')) {
+      this.verifyJwt().then();
+    } else if (this.state.logged) {
+      this.performLogout();
     }
   };
 
-  useEffect(() => {
-    const verifyJwt: Function = async () => {
-      const request: AxiosResponse = await axios.post('/verify', {
-        jwt: localStorage.getItem('jwt')
+  performLogout() {
+    localStorage.removeItem('jwt');
+
+    this.props.dispatch({ type: 'LOGOUT' });
+
+    this.setState({ logged: false });
+  };
+
+  logout(event: any) {
+    event.preventDefault();
+
+    if (this.state.logged) {
+      this.performLogout();
+    }
+  };
+
+  async verifyJwt() {
+    const request: AxiosResponse = await axios.post('/verify', {
+      jwt: localStorage.getItem('jwt')
+    });
+
+    const data: RequestData = request.data;
+
+    if (data.success && data.payload) {
+      this.props.dispatch({
+        type: 'LOGIN',
+        payload: {
+          logged: true,
+          ...data.payload
+        }
       });
 
-      const data: RequestData = request.data;
-
-      if (data.success && data.payload) {
-        dispatch({
-          type: 'LOGIN',
-          payload: {
-            logged: true,
-            ...data.payload
-          }
-        });
-      } else {
-        localStorage.removeItem('jwt');
-
-        dispatch({ type: 'LOGOUT' });
-      }
-    };
-
-    if (localStorage.getItem('jwt')) {
-      verifyJwt();
-    } else if (logged) {
-      localStorage.removeItem('jwt');
-
-      dispatch({ type: 'LOGOUT' });
+      this.setState({ logged: true });
+    } else {
+      this.performLogout();
     }
-  });
+  };
 
-  return (
-    <Fragment>
-      {navigation.map((item: NavigationItem, index: number) => (
-        <NavigationLink
-          key={`navigation-links-${index}`}
-          to={item.path}
-        >
-          {item.text}
-        </NavigationLink>
-      ))}
-      {logged && (
-        <NavigationLink
-          to=''
-          onClick={event => {
-            event.preventDefault();
+  render() {
+    return (
+      <Fragment>
+        {navigation.map((item: NavigationItem, index: number) => (
+          <NavigationLink
+            key={`navigation-links-${index}`}
+            to={item.path}
+          >
+            {item.text}
+          </NavigationLink>
+        ))}
+        {this.state.logged && (
+          <NavigationLink
+            to=''
+            onClick={event => this.logout(event)}
+          >
+            logout
+          </NavigationLink>
+        )}
+        {!this.state.logged && (
+          <NavigationLink to='/login'>
+            login
+          </NavigationLink>
+        )}
+      </Fragment>
+    );
+  };
+}
 
-            logout();
-          }}
-        >
-          logout
-        </NavigationLink>
-      )}
-      {!logged && (
-        <NavigationLink to='/login'>
-          login
-        </NavigationLink>
-      )}
-    </Fragment>
-  );
-};
+const mapStateToProps = (state: StoreState) => ({ ...state });
 
 export default connect(mapStateToProps)(Navigation);

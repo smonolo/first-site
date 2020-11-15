@@ -1,3 +1,4 @@
+// readonly interfaces & types
 interface Titles {
   readonly home: string;
   readonly about: string;
@@ -6,20 +7,21 @@ interface Titles {
   readonly notFound: string;
 }
 
-export const titles: Titles = {
-  home: 'hello',
-  about: 'about',
-  contact: 'contact',
-  login: 'login',
-  notFound: 'not found'
-};
-
 export interface NavigationItem {
   readonly text: string;
   readonly path: string;
 }
 
 type Navigation = Array<NavigationItem>;
+
+// exports
+export const titles: Titles = {
+  home: 'home',
+  about: 'about',
+  contact: 'contact',
+  login: 'login',
+  notFound: 'not found'
+};
 
 export const navigation: Navigation = [
   {
@@ -35,3 +37,5 @@ export const navigation: Navigation = [
     path: '/contact'
   }
 ];
+
+export const mainColor: string = '#008cff';
