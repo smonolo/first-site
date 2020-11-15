@@ -6,28 +6,16 @@ import { Redirect } from 'react-router';
 
 import { titles } from '../constants';
 
-import { AuthState, isLogged, login } from '../redux/auth';
+import { AuthState, isLogged, login, LoginResponse } from '../redux/auth';
 
 import Base from '../components/Base';
 
 import { Button, Error, Input, Paragraph } from '../styles';
 
-// interface is readonly
-export interface RequestData {
-  readonly success: boolean;
-  readonly payload?: {
-    readonly jwt: string;
-    readonly id: string;
-    readonly username: string;
-    readonly email: string;
-    readonly siteAdmin: boolean;
-  };
+interface Props {
+  readonly logged: boolean;
+  readonly login: (payload: AuthState) => void;
 }
-
-type Props = {
-  logged: boolean,
-  login: (payload: AuthState) => void
-};
 
 type State = {
   error: string,
@@ -122,17 +110,18 @@ class Register extends Component<Props, State> {
 
     const request: AxiosResponse = await axios.post('/auth/register', {
       auth: 'authRegister',
-      username: usernameValue,
-      email: emailValue,
-      password: passwordValue,
-      repeatPassword: repeatPasswordValue
+      type: 'register',
+      payload: {
+        username: usernameValue,
+        email: emailValue,
+        password: passwordValue,
+        repeatPassword: repeatPasswordValue
+      }
     });
 
-    const data: RequestData = request.data;
+    const data: LoginResponse = request.data;
 
     if (data.success && data.payload) {
-      localStorage.setItem('jwt', data.payload.jwt);
-
       this.setFormData('');
 
       this.props.login({

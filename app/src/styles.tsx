@@ -29,9 +29,7 @@ export const Anchor = styled.a`
 export const Box = styled.div`
   padding: 50px 70px;
   width: 500px;
-  margin-top: 25vh;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 25vh auto;
   background-color: #eeeeee;
   max-width: 90%;
   box-sizing: border-box;
@@ -128,19 +126,19 @@ export const Title = styled.div`
 
 export const UserNavigation = styled.div`
   padding: 10px 15px;
-  background-color: ${mainColor};
-  color: #ffffff;
+  background-color: #ffffff;
+  color: ${mainColor};
   width: 100%;
   box-sizing: border-box;
 `;
 
 export const UserNavigationLink = styled(Link)`
-  color: #ffffff;
+  color: #000000;
   margin-right: 12px;
   text-decoration: none;
   
   &:hover {
-    color: #ffffff;
+    color: #000000;
   }
   
   &:last-child {
@@ -149,8 +147,8 @@ export const UserNavigationLink = styled(Link)`
 `;
 
 export const UserNavigationName = styled.span`
-  color: #000000;
+  color: #ffffff;
   float: right;
-  background-color: #ffffff;
+  background-color: ${mainColor};
   padding: 0 6px;
 `;

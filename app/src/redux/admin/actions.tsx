@@ -13,7 +13,10 @@ interface RequestData {
 export const fetchUsers = () => async (dispatch: AdminDispatch) => {
   const request: AxiosResponse = await axios.post('/admin/users', {
     auth: 'adminUsers',
-    type: 'getList'
+    type: 'getEmailsList',
+    payload: {
+      jwt: localStorage.getItem('jwt')
+    }
   });
 
   const data: RequestData = request.data;

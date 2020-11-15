@@ -6,25 +6,17 @@ import axios, { AxiosResponse } from 'axios';
 
 import { titles } from '../constants';
 
-import { isLogged, getProfile, logout } from '../redux/auth';
+import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 
 import Base from '../components/Base';
 
 import { AdminBadge, Error, Input, Paragraph, ButtonRed } from '../styles';
 
-type UserProfile = {
-  id: string,
-  username: string,
-  email: string,
-  siteAdmin: boolean,
-  jwt: string
-};
-
-type Props = {
-  logged: boolean,
-  logout: Function,
-  profile: UserProfile
-};
+interface Props {
+  readonly logged: boolean;
+  readonly logout: Function;
+  readonly auth: AuthState;
+}
 
 type State = {
   deleteError: string
@@ -38,8 +30,8 @@ interface RequestData {
   readonly success: boolean;
 }
 
-class Profile extends Component<Props, State> {
-  private title: string = titles.profile;
+class Account extends Component<Props, State> {
+  private title: string = titles.account;
 
   private deleteUsername: any = createRef();
 
@@ -90,11 +82,11 @@ class Profile extends Component<Props, State> {
       return this.setDeleteFormData('username is too long');
     }
 
-    if (deleteUsernameValue !== this.props.profile.username) {
+    if (deleteUsernameValue !== this.props.auth.username) {
       return this.setDeleteFormData('username is incorrect');
     }
 
-    if (this.props.profile.siteAdmin) {
+    if (this.props.auth.siteAdmin) {
       return this.setDeleteFormData('cannot delete account as site admin');
     }
 
@@ -102,17 +94,17 @@ class Profile extends Component<Props, State> {
 
     const request: AxiosResponse = await axios.post('/auth/account', {
       auth: 'authAccount',
-      username: deleteUsernameValue,
-      propsUsername: this.props.profile.username,
-      jwt: this.props.profile.jwt,
-      siteAdmin: this.props.profile.siteAdmin,
-      type: 'deleteAccount'
+      type: 'deleteAccount',
+      payload: {
+        jwt: this.props.auth.jwt,
+        username: deleteUsernameValue,
+      }
     });
 
     const data: RequestData = request.data;
 
     if (data.success) {
-      localStorage.removeItem('jwt');
+      this.setDeleteFormData('');
 
       this.props.logout();
     } else {
@@ -128,16 +120,16 @@ class Profile extends Component<Props, State> {
     return (
       <Base title={this.title}>
         <Paragraph>
-          hi {this.props.profile.username}
-          {this.props.profile.siteAdmin && (
+          hi {this.props.auth.username}
+          {this.props.auth.siteAdmin && (
             <AdminBadge>
               admin
             </AdminBadge>
           )}
           <br /><br />
-          id: {this.props.profile.id}
+          id: {this.props.auth.id}
           <br />
-          email: {this.props.profile.email}
+          email: {this.props.auth.email}
         </Paragraph>
         <br />
         <Paragraph>
@@ -170,12 +162,12 @@ class Profile extends Component<Props, State> {
 
 const mapStateToProps = createSelector(
   isLogged,
-  getProfile,
-  (logged, profile) => ({ logged, profile })
+  getAuth,
+  (logged, auth) => ({ logged, auth })
 );
 
 const mapDispatchToProps = {
   logout
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(Account);

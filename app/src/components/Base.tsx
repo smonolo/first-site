@@ -1,14 +1,14 @@
 import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
-import Navigation from '../components/Navigation';
+import Navigation from './navigation/Navigation';
 
 import { Box, Text, Title } from '../styles';
 
-type Props = {
-  title: string,
-  children: any
-};
+interface Props {
+  readonly title: string;
+  readonly children: any;
+}
 
 export default ({ title, children }: Props) => {
   return (

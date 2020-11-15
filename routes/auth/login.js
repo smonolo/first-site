@@ -5,56 +5,65 @@ const jwt = require('jsonwebtoken');
 const User = require('mongoose').model('user');
 
 router.post('/', async (req, res) => {
-  if (req.body.auth && req.body.auth === 'authLogin') {
-    if (!req.body.username || !req.body.password) {
+  if (!req.body.auth || req.body.auth !== 'authLogin') {
+    return res.json({ success: false });
+  }
+
+  if (!req.body.type || !req.body.payload) {
+    return res.json({ success: false });
+  }
+
+  if (req.body.type === 'login') {
+    if (!req.body.payload.username || !req.body.payload.password) {
       return res.json({ success: false });
     }
 
-    if (req.body.username.length < 3) {
+    if (
+      req.body.payload.username.length < 3 ||
+      req.body.payload.password.length < 8 ||
+      req.body.payload.password.length > 1024
+    ) {
       return res.json({ success: false });
     }
 
-    if (req.body.password.length < 8 || req.body.password.length > 1024) {
-      return res.json({ success: false });
-    }
+    const passwordHash = sha1(req.body.payload.password);
 
-    const passwordHash = sha1(req.body.password);
-
-    let dbUser;
+    let user;
 
     try {
-      dbUser = await User.findOne({
+      user = await User.findOne({
         $or: [
-          { username: req.body.username },
-          { email: req.body.username.toLowerCase() }
+          { username: req.body.payload.username },
+          { email: req.body.payload.username.toLowerCase() }
         ],
-        password: passwordHash
+        password: passwordHash.toLowerCase()
       }).select('_id username email siteAdmin');
     } catch (error) {
       return res.json({ success: false });
     }
 
-    if (dbUser) {
-      const jwtContent = {
-        id: dbUser._id,
-        username: dbUser.username,
-        email: dbUser.email,
-        siteAdmin: dbUser.siteAdmin
-      };
-      const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);
-
-      res.json({
-        success: true,
-        payload: {
-          jwt: jwtValue,
-          ...jwtContent
-        }
-      });
-    } else {
-      res.json({ success: false });
+    if (!user) {
+      return res.json({ success: false });
     }
+
+    const jwtContent = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      siteAdmin: user.siteAdmin
+    };
+
+    const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);
+
+    return res.json({
+      success: true,
+      payload: {
+        jwt: jwtValue,
+        ...jwtContent
+      }
+    });
   } else {
-    res.json({ success: false });
+    return res.json({ success: false });
   }
 });
 

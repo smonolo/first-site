@@ -3,17 +3,17 @@ const jwt = require('jsonwebtoken');
 
 const User = require('mongoose').model('user');
 
-router.post('/', (req, res) => {
-  if (!req.body.auth || req.body.auth !== 'authAccount') {
+router.post('/', async (req, res) => {
+  if (!req.body.auth || req.body.auth !== 'adminSiteAdmins') {
     return res.json({ success: false });
   }
 
   if (!req.body.payload || !req.body.payload.jwt) {
-    res.json({ success: false });
+    return res.json({ success: false });
   }
 
   jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
-    if (error) {
+    if (error || !result.siteAdmin) {
       return res.json({ success: false });
     }
 
@@ -21,20 +21,21 @@ router.post('/', (req, res) => {
       return res.json({ success: false });
     }
 
-    if (req.body.type === 'deleteAccount') {
-      if (result.username !== req.body.payload.username) {
-        return res.json({ success: false });
-      }
-
-      if (result.siteAdmin) {
-        return res.json({ success: false });
-      }
-
+    if (['assignSiteAdmin', 'revokeSiteAdmin'].includes(req.body.type)) {
       let user;
 
       try {
-        user = await User.findOneAndDelete({
-          username: req.body.payload.username
+        user = await User.findOneAndUpdate({
+          $or: [
+            { username: req.body.payload.username },
+            { email: req.body.payload.username.toLowerCase() }
+          ]
+        }, {
+          $set: {
+            siteAdmin: req.body.type === 'assignSiteAdmin'
+          }
+        }, {
+          useFindAndModify: false
         }).select('_id');
       } catch (error) {
         return res.json({ success: false });

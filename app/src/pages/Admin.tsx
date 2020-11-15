@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Redirect } from 'react-router';
@@ -8,16 +8,17 @@ import { titles } from '../constants';
 import { isLogged, isSiteAdmin } from '../redux/auth';
 import { fetchUsers, getUsers } from '../redux/admin';
 
+import SiteAdmins from '../components/admin/SiteAdmins';
+import Users from '../components/admin/Users';
+
 import Base from '../components/Base';
 
-import { Paragraph } from '../styles';
-
-type Props = {
-  logged: boolean,
-  siteAdmin: boolean,
-  fetchUsers: Function,
-  users: Array<string>
-};
+interface Props {
+  readonly logged: boolean;
+  readonly siteAdmin: boolean;
+  readonly fetchUsers: Function;
+  readonly users: Array<string>;
+}
 
 type State = {
   loading: boolean
@@ -53,18 +54,12 @@ class Admin extends Component<Props, State> {
 
     return (
       <Base title={this.title}>
-        <Paragraph>
-          users
-          <br /><br />
-          {this.state.loading && 'loading users...'}
-          {!this.state.loading && (
-            <Fragment>
-              count: {this.props.users.length}
-              <br />
-              list: {this.props.users.join(', ')}
-            </Fragment>
-          )}
-        </Paragraph>
+        <Users
+          loading={this.state.loading}
+          users={this.props.users}
+        />
+        <br />
+        <SiteAdmins />
       </Base>
     );
   };

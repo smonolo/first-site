@@ -6,7 +6,7 @@ interface Titles {
   readonly login: string;
   readonly register: string;
   readonly admin: string;
-  readonly profile: string;
+  readonly account: string;
   readonly notFound: string;
 }
 
@@ -25,7 +25,7 @@ export const titles: Titles = {
   login: 'login',
   register: 'register',
   admin: 'admin',
-  profile: 'profile',
+  account: 'account',
   notFound: 'not found'
 };
 

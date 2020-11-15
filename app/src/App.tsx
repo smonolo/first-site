@@ -7,12 +7,11 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Admin from './pages/Admin';
-import Profile from './pages/Profile';
+import Account from './pages/Account';
 import NotFound from './pages/NotFound';
 
 import { GlobalStyle } from './styles';
 
-// all values are readonly as they should not be edited
 interface Page {
   readonly exact: boolean;
   readonly path: string;
@@ -28,7 +27,7 @@ const pages: Pages = [
   { exact: true, path: '/login', component: Login },
   { exact: true, path: '/register', component: Register },
   { exact: true, path: '/admin', component: Admin },
-  { exact: true, path: '/profile', component: Profile },
+  { exact: true, path: '/account', component: Account },
   { exact: true, path: '', component: NotFound }
 ];
 
