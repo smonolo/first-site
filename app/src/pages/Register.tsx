@@ -37,11 +37,13 @@ type State = {
   }
 };
 
-class Login extends Component<Props, State> {
-  private title: string = titles.login;
+class Register extends Component<Props, State> {
+  private title: string = titles.register;
 
   private username: any = createRef();
+  private email: any = createRef();
   private password: any = createRef();
+  private repeatPassword: any = createRef();
 
   constructor(props: Props) {
     super(props);
@@ -49,7 +51,7 @@ class Login extends Component<Props, State> {
     this.state = {
       error: '',
       button: {
-        text: 'login',
+        text: 'register',
         disabled: false
       }
     };
@@ -59,13 +61,13 @@ class Login extends Component<Props, State> {
     this.setState({
       error,
       button: {
-        text: 'login',
+        text: 'register',
         disabled: false
       }
     });
   };
 
-  async login(event: any) {
+  async register(event: any) {
     event.preventDefault();
 
     this.setState({
@@ -77,7 +79,9 @@ class Login extends Component<Props, State> {
     });
 
     const usernameValue: string = this.username.value;
+    const emailValue: string = this.email.value;
     const passwordValue: string = this.password.value;
+    const repeatPasswordValue: string = this.repeatPassword.value;
 
     if (!usernameValue) {
       return this.setFormData('username is missing');
@@ -91,25 +95,37 @@ class Login extends Component<Props, State> {
       return this.setFormData('username is too long');
     }
 
-    if (!passwordValue) {
+    if (!emailValue) {
+      return this.setFormData('email is missing');
+    }
+
+    if (!passwordValue || !repeatPasswordValue) {
       return this.setFormData('password is missing');
     }
 
-    if (passwordValue.length < 8) {
+    if (passwordValue.length < 8 || repeatPasswordValue.length < 8) {
       return this.setFormData('password is too short');
     }
 
-    if (passwordValue.length > 1024) {
+    if (passwordValue.length > 1024 || repeatPasswordValue.length > 1024) {
       return this.setFormData('password is too long');
     }
 
-    this.username.value = '';
-    this.password.value = '';
+    if (passwordValue !== repeatPasswordValue) {
+      return this.setFormData('passwords are not the same');
+    }
 
-    const request: AxiosResponse = await axios.post('/auth/login', {
-      auth: 'authLogin',
+    this.username.value = '';
+    this.email.value = '';
+    this.password.value = '';
+    this.repeatPassword.value = '';
+
+    const request: AxiosResponse = await axios.post('/auth/register', {
+      auth: 'authRegister',
       username: usernameValue,
-      password: passwordValue
+      email: emailValue,
+      password: passwordValue,
+      repeatPassword: repeatPasswordValue
     });
 
     const data: RequestData = request.data;
@@ -124,7 +140,7 @@ class Login extends Component<Props, State> {
         ...data.payload
       });
     } else {
-      this.setFormData('invalid username or password');
+      this.setFormData('could not register');
     }
   };
 
@@ -148,6 +164,15 @@ class Login extends Component<Props, State> {
             required
           />
           <br /><br />
+          email
+          <br />
+          <Input
+            type='email'
+            name='email'
+            ref={(input: HTMLInputElement) => this.email = input}
+            required
+          />
+          <br /><br />
           password
           <br />
           <Input
@@ -159,10 +184,21 @@ class Login extends Component<Props, State> {
             required
           />
           <br /><br />
+          repeat password
+          <br />
+          <Input
+            type='password'
+            name='repeatPassword'
+            minLength={8}
+            maxLength={1024}
+            ref={(input: HTMLInputElement) => this.repeatPassword = input}
+            required
+          />
+          <br /><br />
           <Button
             type='submit'
             disabled={this.state.button.disabled}
-            onClick={event => this.login(event)}
+            onClick={event => this.register(event)}
           >
             {this.state.button.text}
           </Button>
@@ -181,4 +217,4 @@ const mapDispatchToProps = {
   login
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

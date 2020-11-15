@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const sha1 = require('sha1');
 const jwt = require('jsonwebtoken');
+const uuid = require('uuid');
 
 const User = require('mongoose').model('user');
 
 router.post('/', async (req, res) => {
-  if (req.body.auth && req.body.auth === 'authLogin') {
-    if (!req.body.username || !req.body.password) {
+  if (req.body.auth && req.body.auth === 'authRegister') {
+    if (!req.body.username || !req.body.email || !req.body.password || !req.body.repeatPassword) {
       return res.json({ success: false });
     }
 
@@ -18,28 +19,47 @@ router.post('/', async (req, res) => {
       return res.json({ success: false });
     }
 
-    const passwordHash = sha1(req.body.password);
+    if (req.body.repeatPassword.length < 8 || req.body.repeatPassword.length > 1024) {
+      return res.json({ success: false });
+    }
 
-    let dbUser;
+    if (sha1(req.body.password) !== sha1(req.body.repeatPassword)) {
+      return res.json({ success: false });
+    }
+
+    let dbUserCount;
 
     try {
-      dbUser = await User.findOne({
+      dbUserCount = await User.countDocuments({
         $or: [
           { username: req.body.username },
           { email: req.body.username.toLowerCase() }
-        ],
-        password: passwordHash
-      }).select('_id username email siteAdmin');
+        ]
+      });
     } catch (error) {
       return res.json({ success: false });
     }
 
-    if (dbUser) {
+    if (!dbUserCount && dbUserCount === 0) {
+      const userDoc = {
+        _id: uuid.v4(),
+        username: req.body.username,
+        email: req.body.email.toLowerCase(),
+        password: sha1(req.body.password),
+        siteAdmin: false
+      };
+
+      try {
+        await User.create(userDoc);
+      } catch (error) {
+        return res.json({ success: false });
+      }
+
       const jwtContent = {
-        id: dbUser._id,
-        username: dbUser.username,
-        email: dbUser.email,
-        siteAdmin: dbUser.siteAdmin
+        id: userDoc._id,
+        username: userDoc.username,
+        email: userDoc.email,
+        siteAdmin: userDoc.siteAdmin
       };
       const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);
 

@@ -56,6 +56,10 @@ export const Button = styled.button`
   }
 `;
 
+export const ButtonRed = styled(Button)`
+  background-color: #ff0000;
+`;
+
 export const Error = styled.div`
   padding: 6px 10px;
   width: 100%;
@@ -93,10 +97,14 @@ export const NavigationLink = styled(Link)`
   &:hover {
     color: #000000;
   }
+`;
+
+export const NavigationLinkRight = styled(NavigationLink)`
+  float: right;
+  margin-right: 0;
   
   &:last-child {
-    margin-right: 0;
-    float: right;
+    margin-right: 12px;
   }
 `;
 

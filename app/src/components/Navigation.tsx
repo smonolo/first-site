@@ -15,7 +15,13 @@ import {
 } from '../redux/auth';
 import { RequestData } from '../pages/Login';
 
-import { NavigationLink, UserNavigation, UserNavigationLink, UserNavigationName } from '../styles';
+import {
+  NavigationLink,
+  NavigationLinkRight,
+  UserNavigation,
+  UserNavigationLink,
+  UserNavigationName
+} from '../styles';
 
 type Props = {
   logged: boolean,
@@ -40,8 +46,6 @@ class Navigation extends Component<Props, State> {
     localStorage.removeItem('jwt');
 
     this.props.logout();
-
-    this.setState({ logged: false });
   };
 
   logout(event: any) {
@@ -100,17 +104,22 @@ class Navigation extends Component<Props, State> {
           </NavigationLink>
         ))}
         {this.props.logged && (
-          <NavigationLink
+          <NavigationLinkRight
             to=''
             onClick={event => this.logout(event)}
           >
             logout
-          </NavigationLink>
+          </NavigationLinkRight>
         )}
         {!this.props.logged && (
-          <NavigationLink to='/login'>
-            login
-          </NavigationLink>
+          <Fragment>
+            <NavigationLinkRight to='/login'>
+              login
+            </NavigationLinkRight>
+            <NavigationLinkRight to='/register'>
+              register
+            </NavigationLinkRight>
+          </Fragment>
         )}
       </Fragment>
     );

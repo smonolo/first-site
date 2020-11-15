@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Admin from './pages/Admin';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
@@ -25,6 +26,7 @@ const pages: Pages = [
   { exact: true, path: '/about', component: About },
   { exact: true, path: '/contact', component: Contact },
   { exact: true, path: '/login', component: Login },
+  { exact: true, path: '/register', component: Register },
   { exact: true, path: '/admin', component: Admin },
   { exact: true, path: '/profile', component: Profile },
   { exact: true, path: '', component: NotFound }

@@ -4,6 +4,7 @@ interface Titles {
   readonly about: string;
   readonly contact: string;
   readonly login: string;
+  readonly register: string;
   readonly admin: string;
   readonly profile: string;
   readonly notFound: string;
@@ -22,6 +23,7 @@ export const titles: Titles = {
   about: 'about',
   contact: 'contact',
   login: 'login',
+  register: 'register',
   admin: 'admin',
   profile: 'profile',
   notFound: 'not found'

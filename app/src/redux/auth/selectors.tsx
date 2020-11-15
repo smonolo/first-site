@@ -11,5 +11,6 @@ export const getProfile: Selector<StoreState, any> = state => ({
   id: state.auth.id,
   username: state.auth.username,
   email: state.auth.email,
-  siteAdmin: state.auth.siteAdmin
+  siteAdmin: state.auth.siteAdmin,
+  jwt: state.auth.jwt
 });

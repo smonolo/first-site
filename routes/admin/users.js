@@ -28,6 +28,8 @@ router.post('/', async (req, res) => {
         } else {
           res.json({ success: false });
         }
+      } else {
+        res.json({ success: false });
       }
     } else {
       res.json({ success: false });

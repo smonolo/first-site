@@ -3,6 +3,10 @@ const jwt = require('jsonwebtoken');
 
 router.post('/', (req, res) => {
   if (req.body.auth && req.body.auth === 'authVerify') {
+    if (!req.body.jwt) {
+      return res.json({ success: false });
+    }
+
     jwt.verify(req.body.jwt, process.env.STEMON_JWT_TOKEN, (err, result) => {
       if (result && !err) {
         res.json({

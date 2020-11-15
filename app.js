@@ -29,6 +29,8 @@ app.use((req, res, next) => {
 
 app.use('/auth/login', require('./routes/auth/login'));
 app.use('/auth/verify', require('./routes/auth/verify'));
+app.use('/auth/register', require('./routes/auth/register'));
+app.use('/auth/account', require('./routes/auth/account'));
 
 app.use('/admin/users', require('./routes/admin/users'));
 
