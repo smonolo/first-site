@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
       return res.json({ success: false });
     }
 
-    if (req.body.username.length < 3 || req.body.username.length > 15) {
+    if (req.body.username.length < 3) {
       return res.json({ success: false });
     }
 

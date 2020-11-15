@@ -87,10 +87,6 @@ class Login extends Component<Props, State> {
       return this.setFormData('username is too short');
     }
 
-    if (usernameValue.length > 15) {
-      return this.setFormData('username is too long');
-    }
-
     if (!passwordValue) {
       return this.setFormData('password is missing');
     }
@@ -137,13 +133,12 @@ class Login extends Component<Props, State> {
       <Base title={this.title}>
         <Paragraph>
           {this.state.error && <Error>{this.state.error}</Error>}
-          username
+          username or email
           <br />
           <Input
             type='text'
             name='username'
             minLength={3}
-            maxLength={15}
             ref={(input: HTMLInputElement) => this.username = input}
             required
           />
