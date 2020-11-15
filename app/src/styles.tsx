@@ -11,6 +11,13 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
+export const AdminBadge = styled.span`
+  color: #ffffff;
+  background-color: #ff0000;
+  padding: 0 6px;
+  margin-left: 10px;
+`;
+
 export const Anchor = styled.a`
   color: #ffffff;
   
@@ -133,10 +140,14 @@ export const UserNavigationLink = styled(Link)`
   }
 `;
 
-export const UserNavigationName = styled.span`
+export const UserNavigationName = styled(Link)`
   color: #000000;
   text-decoration: none;
   float: right;
   background-color: #ffffff;
   padding: 0 6px;
+  
+  &:hover {
+    color: #000000;
+  }
 `;

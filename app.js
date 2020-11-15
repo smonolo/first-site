@@ -1,31 +1,20 @@
 const express = require('express');
 const path = require('path');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const fs = require('fs');
-const sha1 = require('sha1');
 
 const app = express();
 
-const production = !process.argv.includes('--dev');
+mongoose.connect(process.env.STEMON_MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+console.log('Connected to database');
 
-let creds = {};
-
-if (production) {
-  fs.readFile('/home/stemon-me/creds.json', 'utf8', (err, data) => {
-    if (data && !err) {
-      const { username, password } = JSON.parse(data);
-
-      creds = { username, password };
-    } else {
-      console.log('Could not read creds.json file');
-    }
-  });
-} else {
-  creds = {
-    username: 'dev',
-    password: '34c6fceca75e456f25e7e99531e2425c6c1de443'
-  };
-}
+fs.readdirSync(path.join(__dirname, 'models')).forEach(model => {
+  require(path.join(__dirname, 'models', model));
+});
+console.log('Loaded database models');
 
 app.use(express.static(path.join(__dirname, 'app', 'build')));
 app.use(express.urlencoded({ extended: false }));
@@ -38,40 +27,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/login', (req, res) => {
-  const hash = sha1(req.body.password);
-
-  if (req.body.username === creds.username && hash === creds.password) {
-    const jwtContent = { username: creds.username };
-    const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);
-
-    res.json({
-      success: true,
-      payload: {
-        jwt: jwtValue,
-        ...jwtContent
-      }
-    });
-  } else {
-    res.json({ success: false });
-  }
-});
-
-app.post('/verify', (req, res) => {
-  jwt.verify(req.body.jwt, process.env.STEMON_JWT_TOKEN, (err, result) => {
-    if (result && !err) {
-      res.json({
-        success: true,
-        payload: {
-          jwt: req.body.jwt,
-          username: result.username
-        }
-      });
-    } else {
-      res.json({ success: false });
-    }
-  });
-});
+app.use('/auth/login', require('./routes/auth/login'));
+app.use('/auth/verify', require('./routes/auth/verify'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app', 'build', 'index.html'));

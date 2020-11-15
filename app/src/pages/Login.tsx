@@ -17,7 +17,10 @@ export interface RequestData {
   readonly success: boolean;
   readonly payload?: {
     readonly jwt: string;
+    readonly id: string;
     readonly username: string;
+    readonly email: string;
+    readonly siteAdmin: boolean;
   };
 }
 
@@ -87,7 +90,8 @@ class Login extends Component<Props, State> {
     this.username.value = '';
     this.password.value = '';
 
-    const request: AxiosResponse = await axios.post('/login', {
+    const request: AxiosResponse = await axios.post('/auth/login', {
+      auth: 'authLogin',
       username: usernameValue,
       password: passwordValue
     });

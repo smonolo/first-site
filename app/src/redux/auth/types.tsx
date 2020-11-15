@@ -1,6 +1,9 @@
 export type AuthState = {
   logged: boolean,
+  id: string,
   username: string,
+  email: string,
+  siteAdmin: boolean,
   jwt: string
 };
 

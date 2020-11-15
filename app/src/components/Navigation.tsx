@@ -5,7 +5,14 @@ import { createSelector } from 'reselect';
 
 import { navigation, NavigationItem } from '../constants';
 
-import { isLogged, getUsername, logout, login, AuthState } from '../redux/auth';
+import {
+  isLogged,
+  getUsername,
+  isSiteAdmin,
+  logout,
+  login,
+  AuthState
+} from '../redux/auth';
 import { RequestData } from '../pages/Login';
 
 import { NavigationLink, UserNavigation, UserNavigationLink, UserNavigationName } from '../styles';
@@ -13,6 +20,7 @@ import { NavigationLink, UserNavigation, UserNavigationLink, UserNavigationName 
 type Props = {
   logged: boolean,
   username: string,
+  siteAdmin: boolean,
   logout: Function,
   login: (payload: AuthState) => void
 };
@@ -45,7 +53,8 @@ class Navigation extends Component<Props, State> {
   };
 
   async verifyJwt() {
-    const request: AxiosResponse = await axios.post('/verify', {
+    const request: AxiosResponse = await axios.post('/auth/verify', {
+      auth: 'authVerify',
       jwt: localStorage.getItem('jwt')
     });
 
@@ -67,10 +76,12 @@ class Navigation extends Component<Props, State> {
         {this.props.logged && (
           <Fragment>
             <UserNavigation>
-              <UserNavigationLink to='/admin'>
-                admin
-              </UserNavigationLink>
-              <UserNavigationName>
+              {this.props.siteAdmin && (
+                <UserNavigationLink to='/admin'>
+                  admin
+                </UserNavigationLink>
+              )}
+              <UserNavigationName to='/profile'>
                 {this.props.username}
               </UserNavigationName>
             </UserNavigation>
@@ -106,7 +117,8 @@ class Navigation extends Component<Props, State> {
 const mapStateToProps = createSelector(
   isLogged,
   getUsername,
-  (logged, username) => ({ logged, username })
+  isSiteAdmin,
+  (logged, username, siteAdmin) => ({ logged, username, siteAdmin })
 );
 
 const mapDispatchToProps = {

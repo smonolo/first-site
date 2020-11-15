@@ -5,7 +5,10 @@ import types from './action-types';
 
 export const authInitialState: AuthState = {
   logged: false,
+  id: '',
   username: '',
+  email: '',
+  siteAdmin: false,
   jwt: ''
 };
 

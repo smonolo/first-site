@@ -5,21 +5,22 @@ import { Redirect } from 'react-router';
 
 import { titles } from '../constants';
 
-import { isLogged } from '../redux/auth';
+import { isLogged, isSiteAdmin } from '../redux/auth';
 
 import Base from '../components/Base';
 
 import { Paragraph } from '../styles';
 
 type Props = {
-  logged: boolean
+  logged: boolean,
+  siteAdmin: boolean
 };
 
 class Admin extends Component<Props> {
   private title: string = titles.admin;
 
   render() {
-    if (!this.props.logged) {
+    if (!this.props.logged || !this.props.siteAdmin) {
       return <Redirect to='/' />;
     }
 
@@ -37,7 +38,8 @@ class Admin extends Component<Props> {
 
 const mapStateToProps = createSelector(
   isLogged,
-  logged => ({ logged })
+  isSiteAdmin,
+  (logged, siteAdmin) => ({ logged, siteAdmin })
 );
 
 export default connect(mapStateToProps)(Admin);
