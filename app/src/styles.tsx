@@ -110,3 +110,33 @@ export const Title = styled.div`
   border-bottom: 4px solid ${mainColor};
   width: fit-content;
 `;
+
+export const UserNavigation = styled.div`
+  padding: 10px 15px;
+  background-color: ${mainColor};
+  color: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+export const UserNavigationLink = styled(Link)`
+  color: #ffffff;
+  margin-right: 12px;
+  text-decoration: none;
+  
+  &:hover {
+    color: #ffffff;
+  }
+  
+  &:last-child {
+    margin-right: 0;
+  }
+`;
+
+export const UserNavigationName = styled.span`
+  color: #000000;
+  text-decoration: none;
+  float: right;
+  background-color: #ffffff;
+  padding: 0 6px;
+`;

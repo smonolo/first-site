@@ -1,36 +1,29 @@
 import React, { Component, Fragment } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 
 import { navigation, NavigationItem } from '../constants';
 
-import { store, StoreState } from '../redux/store';
-import { getAuth, AuthDispatch } from '../redux/auth';
+import { isLogged, getUsername, logout, login, AuthState } from '../redux/auth';
 import { RequestData } from '../pages/Login';
 
-import { NavigationLink } from '../styles';
+import { NavigationLink, UserNavigation, UserNavigationLink, UserNavigationName } from '../styles';
 
 type Props = {
-  dispatch: AuthDispatch;
-}
-
-type State = {
-  logged: boolean
+  logged: boolean,
+  username: string,
+  logout: Function,
+  login: (payload: AuthState) => void
 };
 
+type State = {};
+
 class Navigation extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      logged: getAuth(store.getState()).logged
-    };
-  };
-
   componentDidMount() {
     if (localStorage.getItem('jwt')) {
       this.verifyJwt().then();
-    } else if (this.state.logged) {
+    } else if (this.props.logged) {
       this.performLogout();
     }
   };
@@ -38,7 +31,7 @@ class Navigation extends Component<Props, State> {
   performLogout() {
     localStorage.removeItem('jwt');
 
-    this.props.dispatch({ type: 'LOGOUT' });
+    this.props.logout();
 
     this.setState({ logged: false });
   };
@@ -46,7 +39,7 @@ class Navigation extends Component<Props, State> {
   logout(event: any) {
     event.preventDefault();
 
-    if (this.state.logged) {
+    if (this.props.logged) {
       this.performLogout();
     }
   };
@@ -59,15 +52,10 @@ class Navigation extends Component<Props, State> {
     const data: RequestData = request.data;
 
     if (data.success && data.payload) {
-      this.props.dispatch({
-        type: 'LOGIN',
-        payload: {
-          logged: true,
-          ...data.payload
-        }
+      this.props.login({
+        logged: true,
+        ...data.payload
       });
-
-      this.setState({ logged: true });
     } else {
       this.performLogout();
     }
@@ -76,6 +64,19 @@ class Navigation extends Component<Props, State> {
   render() {
     return (
       <Fragment>
+        {this.props.logged && (
+          <Fragment>
+            <UserNavigation>
+              <UserNavigationLink to='/admin'>
+                admin
+              </UserNavigationLink>
+              <UserNavigationName>
+                {this.props.username}
+              </UserNavigationName>
+            </UserNavigation>
+            <br />
+          </Fragment>
+        )}
         {navigation.map((item: NavigationItem, index: number) => (
           <NavigationLink
             key={`navigation-links-${index}`}
@@ -84,7 +85,7 @@ class Navigation extends Component<Props, State> {
             {item.text}
           </NavigationLink>
         ))}
-        {this.state.logged && (
+        {this.props.logged && (
           <NavigationLink
             to=''
             onClick={event => this.logout(event)}
@@ -92,7 +93,7 @@ class Navigation extends Component<Props, State> {
             logout
           </NavigationLink>
         )}
-        {!this.state.logged && (
+        {!this.props.logged && (
           <NavigationLink to='/login'>
             login
           </NavigationLink>
@@ -102,6 +103,15 @@ class Navigation extends Component<Props, State> {
   };
 }
 
-const mapStateToProps = (state: StoreState) => ({ ...state });
+const mapStateToProps = createSelector(
+  isLogged,
+  getUsername,
+  (logged, username) => ({ logged, username })
+);
 
-export default connect(mapStateToProps)(Navigation);
+const mapDispatchToProps = {
+  logout,
+  login
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);

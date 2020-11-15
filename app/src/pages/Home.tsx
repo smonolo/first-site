@@ -1,33 +1,21 @@
-import React, { Fragment } from 'react';
-import { Helmet } from 'react-helmet';
+import React from 'react';
 
 import { titles } from '../constants';
 
-import Navigation from '../components/Navigation';
+import Base from '../components/Base';
 
-import { Box, Paragraph, Text, Title } from '../styles';
+import { Paragraph } from '../styles';
 
 export default () => {
   const title: string = titles.home;
 
   return (
-    <Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <Box>
-        <Text>
-          <Title>{title}</Title>
-          <br />
-          <Paragraph>
-            i'm a web dev
-            <br /><br />
-            that's it
-          </Paragraph>
-          <br />
-          <Navigation />
-        </Text>
-      </Box>
-    </Fragment>
+    <Base title={title}>
+      <Paragraph>
+        i'm a web dev
+        <br /><br />
+        that's it
+      </Paragraph>
+    </Base>
   );
 };

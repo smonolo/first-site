@@ -1,17 +1,16 @@
-import React, { Fragment, createRef, Component } from 'react';
-import { Helmet } from 'react-helmet';
+import React, { createRef, Component } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import { Redirect } from 'react-router';
 
 import { titles } from '../constants';
 
-import { store, StoreState } from '../redux/store';
-import { getAuth, AuthDispatch } from '../redux/auth';
+import { AuthState, isLogged, login } from '../redux/auth';
 
-import Navigation from '../components/Navigation';
+import Base from '../components/Base';
 
-import { Box, Button, Error, Input, Paragraph, Text, Title } from '../styles';
+import { Button, Error, Input, Paragraph } from '../styles';
 
 // interface is readonly
 export interface RequestData {
@@ -23,11 +22,11 @@ export interface RequestData {
 }
 
 type Props = {
-  dispatch: AuthDispatch
+  logged: boolean,
+  login: (payload: AuthState) => void
 };
 
 type State = {
-  logged: boolean,
   error: string,
   button: {
     text: string,
@@ -45,7 +44,6 @@ class Login extends Component<Props, State> {
     super(props);
 
     this.state = {
-      logged: getAuth(store.getState()).logged,
       error: '',
       button: {
         text: 'login',
@@ -101,73 +99,64 @@ class Login extends Component<Props, State> {
 
       this.setFormData('');
 
-      this.props.dispatch({
-        type: 'LOGIN',
-        payload: {
-          logged: true,
-          ...data.payload
-        }
+      this.props.login({
+        logged: true,
+        ...data.payload
       });
-
-      this.setState({ logged: true });
     } else {
       this.setFormData('invalid username or password');
     }
   };
 
   render() {
-    if (this.state.logged) {
+    if (this.props.logged) {
       return <Redirect to='/' />;
     }
 
     return (
-      <Fragment>
-        <Helmet>
-          <title>{this.title}</title>
-        </Helmet>
-        <Box>
-          <Text>
-            <Title>{this.title}</Title>
+      <Base title={this.title}>
+        <Paragraph>
+          {this.state.error && <Error>{this.state.error}</Error>}
+          <form>
+            username
             <br />
-            <Paragraph>
-              {this.state.error && <Error>{this.state.error}</Error>}
-              <form>
-                username
-                <br />
-                <Input
-                  type='text'
-                  name='username'
-                  ref={(input: HTMLInputElement) => this.username = input}
-                  required
-                />
-                <br /><br />
-                password
-                <br />
-                <Input
-                  type='password'
-                  name='password'
-                  ref={(input: HTMLInputElement) => this.password = input}
-                  required
-                />
-                <br /><br />
-                <Button
-                  type='submit'
-                  disabled={this.state.button.disabled}
-                  onClick={event => this.login(event)}
-                >
-                  {this.state.button.text}
-                </Button>
-              </form>
-            </Paragraph>
+            <Input
+              type='text'
+              name='username'
+              ref={(input: HTMLInputElement) => this.username = input}
+              required
+            />
+            <br /><br />
+            password
             <br />
-            <Navigation />
-          </Text>
-        </Box>
-      </Fragment>
+            <Input
+              type='password'
+              name='password'
+              ref={(input: HTMLInputElement) => this.password = input}
+              required
+            />
+            <br /><br />
+            <Button
+              type='submit'
+              disabled={this.state.button.disabled}
+              onClick={event => this.login(event)}
+            >
+              {this.state.button.text}
+            </Button>
+          </form>
+        </Paragraph>
+      </Base>
     );
   };
 }
 
-const mapStateToProps = (state: StoreState) => ({ ...state });
+const mapStateToProps = createSelector(
+  isLogged,
+  logged => ({ logged })
+);
 
-export default connect(mapStateToProps)(Login);
+const mapDispatchToProps = {
+  login
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

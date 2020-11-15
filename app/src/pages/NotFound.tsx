@@ -1,31 +1,19 @@
-import React, { Fragment } from 'react';
-import { Helmet } from 'react-helmet';
+import React from 'react';
 
 import { titles } from '../constants';
 
-import Navigation from '../components/Navigation';
+import Base from '../components/Base';
 
-import { Box, Paragraph, Text, Title } from '../styles';
+import { Paragraph } from '../styles';
 
 export default () => {
   const title: string = titles.notFound;
 
   return (
-    <Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <Box>
-        <Text>
-          <Title>{title}</Title>
-          <br />
-          <Paragraph>
-            idk what you are looking for, but it's not here
-          </Paragraph>
-          <br />
-          <Navigation />
-        </Text>
-      </Box>
-    </Fragment>
+    <Base title={title}>
+      <Paragraph>
+        idk what you are looking for, but it's not here
+      </Paragraph>
+    </Base>
   );
 };
