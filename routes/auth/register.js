@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
     const password = sha1(req.body.payload.password);
 
     const userDocument = {
-      id,
+      _id: id,
       username: req.body.payload.username,
       email,
       password,
