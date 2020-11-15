@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom';
 
 import { mainColor } from './constants';
 
+const theme = localStorage.getItem('theme');
+
+const light = !theme || theme !== 'dark';
+
 export const GlobalStyle = createGlobalStyle`
   body {
     user-select: none;
     margin: 0;
     padding: 0;
+    background-color: ${light ? '#ffffff' : '#000000'};
   }
 `;
 
@@ -30,7 +35,7 @@ export const Box = styled.div`
   padding: 50px 70px;
   width: 700px;
   margin: 25vh auto;
-  background-color: #eeeeee;
+  background-color: ${light ? '#eeeeee' : '#222222'};
   max-width: 90%;
   box-sizing: border-box;
 `;
@@ -71,9 +76,9 @@ export const Input = styled.input`
   padding: 4px 8px;
   box-sizing: border-box;
   width: 100%;
-  background-color: #ffffff;
+  background-color: ${light ? '#ffffff' : '#222222'};
   border: none;
-  color: #000000;
+  color: ${light ? '#000000' : '#ffffff'};
   font-family: 'Consolas', sans-serif;
   font-size: 16px;
   margin-top: 5px;
@@ -88,12 +93,12 @@ export const Mail = styled.a`
 `;
 
 export const NavigationLink = styled(Link)`
-  color: #000000;
+  color: ${light ? '#000000' : '#ffffff'};
   margin-right: 12px;
   text-decoration: none;
   
   &:hover {
-    color: #000000;
+    color: ${light ? '#000000' : '#ffffff'};
   }
 `;
 
@@ -114,7 +119,7 @@ export const NavigationLinkRightLogout = styled(NavigationLinkRight)`
 
 export const Paragraph = styled.div`
   padding: 15px 20px;
-  background-color: #222222;
+  background-color: ${light ? '#222222' : '#444444'};
   color: #ffffff;
   width: 100%;
   box-sizing: border-box;
@@ -128,23 +133,23 @@ export const Text = styled.div`
 export const Title = styled.div`
   border-bottom: 4px solid ${mainColor};
   width: fit-content;
+  color: ${light ? '#000000' : '#ffffff'};
 `;
 
 export const UserNavigation = styled.div`
   padding: 10px 15px;
-  background-color: #ffffff;
-  color: ${mainColor};
+  background-color: ${light ? '#ffffff' : '#111111'};
   width: 100%;
   box-sizing: border-box;
 `;
 
 export const UserNavigationLink = styled(Link)`
-  color: #000000;
+  color: ${light ? '#000000' : '#ffffff'};
   margin-right: 12px;
   text-decoration: none;
   
   &:hover {
-    color: #000000;
+    color: ${light ? '#000000' : '#ffffff'};
   }
   
   &:last-child {

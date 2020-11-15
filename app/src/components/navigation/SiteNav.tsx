@@ -10,12 +10,28 @@ interface Props {
 }
 
 class SiteNav extends Component<Props> {
+  private light: any = !localStorage.getItem('theme') || localStorage.getItem('theme') !== 'dark';
+
   logout(event: any) {
     event.preventDefault();
 
     if (this.props.logged) {
       this.props.logout();
     }
+  };
+
+  toggleTheme(event: any) {
+    event.preventDefault();
+
+    const theme = localStorage.getItem('theme');
+
+    if (theme && theme === 'dark') {
+      localStorage.setItem('theme', 'light');
+    } else {
+      localStorage.setItem('theme', 'dark');
+    }
+
+    window.location.reload();
   };
 
   render() {
@@ -29,6 +45,12 @@ class SiteNav extends Component<Props> {
             {item.text}
           </NavigationLink>
         ))}
+        <NavigationLink
+          to=''
+          onClick={event => this.toggleTheme(event)}
+        >
+          {this.light ? 'dark' : 'light'}
+        </NavigationLink>
         {this.props.logged && (
           <NavigationLinkRightLogout
             to=''
