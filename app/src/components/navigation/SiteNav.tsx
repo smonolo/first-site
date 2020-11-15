@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 
 import { navigation, NavigationItem } from '../../constants';
 
-import { NavigationLink, NavigationLinkRight } from '../../styles';
+import { NavigationLink, NavigationLinkRight, NavigationLinkRightLogout } from '../../styles';
 
 interface Props {
   readonly logged: boolean;
@@ -30,12 +30,12 @@ class SiteNav extends Component<Props> {
           </NavigationLink>
         ))}
         {this.props.logged && (
-          <NavigationLinkRight
+          <NavigationLinkRightLogout
             to=''
             onClick={event => this.logout(event)}
           >
             logout
-          </NavigationLinkRight>
+          </NavigationLinkRightLogout>
         )}
         {!this.props.logged && (
           <Fragment>

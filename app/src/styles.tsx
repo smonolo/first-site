@@ -106,6 +106,12 @@ export const NavigationLinkRight = styled(NavigationLink)`
   }
 `;
 
+export const NavigationLinkRightLogout = styled(NavigationLinkRight)`
+  &:last-child {
+    margin-right: 0;
+  }
+`;
+
 export const Paragraph = styled.div`
   padding: 15px 20px;
   background-color: #222222;
