@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Redirect } from 'react-router';
@@ -6,6 +6,7 @@ import { Redirect } from 'react-router';
 import { titles } from '../constants';
 
 import { isLogged, isSiteAdmin } from '../redux/auth';
+import { fetchUsers, getUsers } from '../redux/admin';
 
 import Base from '../components/Base';
 
@@ -13,11 +14,37 @@ import { Paragraph } from '../styles';
 
 type Props = {
   logged: boolean,
-  siteAdmin: boolean
+  siteAdmin: boolean,
+  fetchUsers: Function,
+  users: Array<string>
 };
 
-class Admin extends Component<Props> {
+type State = {
+  loading: boolean
+};
+
+class Admin extends Component<Props, State> {
   private title: string = titles.admin;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      loading: false
+    };
+  };
+
+  componentDidMount() {
+    this.props.fetchUsers();
+  };
+
+  componentDidUpdate(nextProps: Readonly<Props>) {
+    if (nextProps.users !== this.props.users) {
+      this.setState({
+        loading: false
+      });
+    }
+  };
 
   render() {
     if (!this.props.logged || !this.props.siteAdmin) {
@@ -27,9 +54,16 @@ class Admin extends Component<Props> {
     return (
       <Base title={this.title}>
         <Paragraph>
-          admin
+          users
           <br /><br />
-          work in progress
+          {this.state.loading && 'loading users...'}
+          {!this.state.loading && (
+            <Fragment>
+              count: {this.props.users.length}
+              <br />
+              list: {this.props.users.join(', ')}
+            </Fragment>
+          )}
         </Paragraph>
       </Base>
     );
@@ -39,7 +73,12 @@ class Admin extends Component<Props> {
 const mapStateToProps = createSelector(
   isLogged,
   isSiteAdmin,
-  (logged, siteAdmin) => ({ logged, siteAdmin })
+  getUsers,
+  (logged, siteAdmin, users) => ({ logged, siteAdmin, users })
 );
 
-export default connect(mapStateToProps)(Admin);
+const mapDispatchToProps = {
+  fetchUsers
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);

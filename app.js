@@ -30,6 +30,8 @@ app.use((req, res, next) => {
 app.use('/auth/login', require('./routes/auth/login'));
 app.use('/auth/verify', require('./routes/auth/verify'));
 
+app.use('/admin/users', require('./routes/admin/users'));
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app', 'build', 'index.html'));
 });
