@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const sha1 = require('sha1');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid');
 const validator = require('validator');
@@ -29,8 +29,8 @@ router.post('/', async (req, res) => {
 
     const username = validator.unescape(validator.trim(req.body.payload.username));
     const email = validator.unescape(validator.trim(req.body.payload.email));
-    const password = validator.unescape(validator.trim(req.body.payload.username));
-    const repeatPassword = validator.unescape(validator.trim(req.body.payload.username));
+    const password = validator.unescape(validator.trim(req.body.payload.password));
+    const repeatPassword = validator.unescape(validator.trim(req.body.payload.repeatPassword));
 
     if (
       username.length < 3 ||
@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
       return res.json({ success: false });
     }
 
-    if (sha1(password) !== sha1(repeatPassword)) {
+    if (password !== repeatPassword) {
       return res.json({ success: false });
     }
 
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
 
     const id = uuid.v4();
     const finalEmail = email.toLowerCase();
-    const finalPassword = sha1(password);
+    const finalPassword = bcrypt.hashSync(password, 15);
 
     const userDocument = {
       _id: id,

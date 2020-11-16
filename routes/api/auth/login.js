@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const sha1 = require('sha1');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 
@@ -40,8 +40,6 @@ router.post('/', async (req, res) => {
       return res.json({ success: false });
     }
 
-    const passwordHash = sha1(password);
-
     let user;
 
     try {
@@ -49,14 +47,17 @@ router.post('/', async (req, res) => {
         $or: [
           { username },
           { email: username.toLowerCase() }
-        ],
-        password: passwordHash.toLowerCase()
-      }).select('_id username email siteAdmin');
+        ]
+      }).select('_id username email password siteAdmin');
     } catch (error) {
       return res.json({ success: false });
     }
 
     if (!user) {
+      return res.json({ success: false });
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
       return res.json({ success: false });
     }
 
