@@ -4,7 +4,7 @@ const validator = require('validator');
 
 const User = require('mongoose').model('user');
 
-const { allowedEmailChars } = require('../../../app');
+const { allowedUsernameChars } = require('../../../app');
 
 router.post('/', (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authAccount') {
@@ -31,11 +31,11 @@ router.post('/', (req, res) => {
 
       const username = validator.unescape(validator.trim(req.body.payload.username));
 
-      if (username.length < 3 || username.length > 320) {
+      if (username.length < 3 || username.length > 15) {
         return res.json({ success: false });
       }
 
-      if (!username.match(allowedEmailChars)) {
+      if (!username.match(allowedUsernameChars)) {
         return res.json({ success: false });
       }
 
