@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
+import validator from 'validator';
 
 import { allowedUsernameChars, titles } from '../constants';
 
@@ -10,8 +11,7 @@ import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 import Base from '../components/Base';
 import Loading from '../components/Loading';
 
-import { AdminBadge, Error, Input, Paragraph, ButtonRed } from '../styles';
-import validator from 'validator';
+import { AdminBadge, Error, Input, Paragraph, ButtonRed, Button } from '../styles';
 
 interface Props {
   readonly logged: boolean;
@@ -20,7 +20,12 @@ interface Props {
 }
 
 type State = {
-  deleteError: string
+  updateError: string,
+  updateButton: {
+    text: string,
+    disabled: boolean
+  },
+  deleteError: string,
   deleteButton: {
     text: string,
     disabled: boolean
@@ -34,12 +39,18 @@ interface RequestData {
 class Account extends Component<Props, State> {
   private title: string = titles.account;
 
+  private updateUsername: any = createRef();
   private deleteUsername: any = createRef();
 
   constructor(props: Props) {
     super(props);
 
     this.state = {
+      updateError: '',
+      updateButton: {
+        text: 'update',
+        disabled: false
+      },
       deleteError: '',
       deleteButton: {
         text: 'delete',
@@ -60,6 +71,16 @@ class Account extends Component<Props, State> {
     }
   };
 
+  setUpdateFormData(updateError: string) {
+    this.setState({
+      updateError,
+      updateButton: {
+        text: 'update',
+        disabled: false
+      }
+    });
+  };
+
   setDeleteFormData(deleteError: string) {
     this.setState({
       deleteError,
@@ -68,6 +89,61 @@ class Account extends Component<Props, State> {
         disabled: false
       }
     });
+  };
+
+  async changeUsername(event: any) {
+    event.preventDefault();
+
+    this.setState({
+      updateError: '',
+      updateButton: {
+        text: 'update',
+        disabled: true
+      }
+    });
+
+    const updateUsernameValue: string = validator.unescape(validator.trim(this.updateUsername.value));
+
+    if (!updateUsernameValue) {
+      return this.setDeleteFormData('username is missing');
+    }
+
+    if (updateUsernameValue.length < 3) {
+      return this.setDeleteFormData('username is too short');
+    }
+
+    if (updateUsernameValue.length > 15) {
+      return this.setDeleteFormData('username is too long');
+    }
+
+    if (!updateUsernameValue.match(allowedUsernameChars)) {
+      return this.setDeleteFormData('username contains invalid characters');
+    }
+
+    if (updateUsernameValue === this.props.auth.username) {
+      return this.setDeleteFormData('username is already in use');
+    }
+
+    this.updateUsername.value = '';
+
+    const request: AxiosResponse = await axios.post('/api/auth/account', {
+      auth: 'authAccount',
+      type: 'updateUsername',
+      payload: {
+        jwt: this.props.auth.jwt,
+        username: updateUsernameValue,
+      }
+    });
+
+    const data: RequestData = request.data;
+
+    if (data.success) {
+      this.setUpdateFormData('');
+
+      this.props.logout();
+    } else {
+      this.setUpdateFormData('could not update username');
+    }
   };
 
   async deleteAccount(event: any) {
@@ -150,6 +226,30 @@ class Account extends Component<Props, State> {
         </Paragraph>
         <br />
         <Paragraph>
+          {this.state.updateError && <Error>{this.state.updateError}</Error>}
+          update username
+          <br /><br />
+          new username
+          <br />
+          <Input
+            type='text'
+            name='updateUsername'
+            minLength={3}
+            maxLength={15}
+            ref={(input: HTMLInputElement) => this.updateUsername = input}
+            required
+          />
+          <br /><br />
+          <Button
+            type='submit'
+            disabled={this.state.updateButton.disabled}
+            onClick={event => this.changeUsername(event)}
+          >
+            {this.state.updateButton.text}
+          </Button>
+        </Paragraph>
+        <br />
+        <Paragraph>
           {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
           delete account
           <br /><br />
@@ -157,7 +257,7 @@ class Account extends Component<Props, State> {
           <br />
           <Input
             type='text'
-            name='username'
+            name='deleteUsername'
             minLength={3}
             maxLength={15}
             ref={(input: HTMLInputElement) => this.deleteUsername = input}

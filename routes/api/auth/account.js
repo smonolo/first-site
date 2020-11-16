@@ -60,6 +60,46 @@ router.post('/', (req, res) => {
       }
 
       return res.json({ success: true });
+    } else if (req.body.type === 'updateUsername') {
+      if (!req.body.payload.username) {
+        return res.json({ success: false });
+      }
+
+      const username = validator.unescape(validator.trim(req.body.payload.username));
+
+      if (username.length < 3 || username.length > 15) {
+        return res.json({ success: false });
+      }
+
+      if (!username.match(allowedUsernameChars)) {
+        return res.json({ success: false });
+      }
+
+      if (result.username === username) {
+        return res.json({ success: false });
+      }
+
+      let user;
+
+      try {
+        user = await User.findOneAndUpdate({
+          _id: result.id
+        }, {
+          $set: {
+            username
+          }
+        }, {
+          useFindAndModify: false
+        }).select('_id');
+      } catch (error) {
+        return res.json({ success: false });
+      }
+
+      if (!user) {
+        return res.json({ success: false });
+      }
+
+      return res.json({ success: true });
     } else {
       return res.json({ success: false });
     }
