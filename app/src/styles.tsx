@@ -50,6 +50,7 @@ export const Button = styled.button`
   font-family: 'Consolas', sans-serif;
   font-size: 16px;
   cursor: pointer;
+  border-radius: 0;
   
   &:disabled,
   &[disabled] {
@@ -81,6 +82,7 @@ export const Input = styled.input`
   font-family: 'Consolas', sans-serif;
   font-size: 16px;
   margin-top: 5px;
+  border-radius: 0;
 `;
 
 export const Mail = styled.a`
@@ -135,6 +137,7 @@ export const SearchInput = styled(Input)`
   margin-top: 0;
   background-color: #333333;
   color: #ffffff;
+  border-radius: 0;
   
   &::placeholder {
     color: #aaaaaa;

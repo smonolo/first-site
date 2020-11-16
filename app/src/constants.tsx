@@ -71,3 +71,9 @@ export const pages: Pages = [
   { exact: true, path: '/profile/:username', component: Profile },
   { exact: true, path: '', component: NotFound }
 ];
+
+export const allowedUsernameChars: RegExp = /[A-Za-z0-9_]/g;
+
+export const allowedEmailChars: RegExp = /[A-Za-z0-9@_.]/g;
+
+export const allowedPasswordChars: RegExp = /[A-Za-z0-9/\\{}#,!_@():;.|`$=+\-*[\]^?&~%"']/g;

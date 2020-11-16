@@ -3,6 +3,10 @@ const path = require('path');
 const mongoose = require('mongoose');
 const fs = require('fs');
 
+exports.allowedUsernameChars = /[A-Za-z0-9_]/g;
+exports.allowedEmailChars = /[A-Za-z0-9@_.]/g;
+exports.allowedPasswordChars = /[A-Za-z0-9/\\{}#,!_@():;.|`$=+\-*[\]^?&~%"']/g;
+
 const app = express();
 
 mongoose.connect(process.env.STEMON_MONGO_URL, {

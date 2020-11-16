@@ -2,8 +2,9 @@ import React, { createRef, Component } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import validator from 'validator';
 
-import { titles } from '../constants';
+import { allowedEmailChars, allowedPasswordChars, allowedUsernameChars, titles } from '../constants';
 
 import { AuthState, isLogged, login, LoginResponse } from '../redux/auth';
 
@@ -78,10 +79,10 @@ class Register extends Component<Props, State> {
       }
     });
 
-    const usernameValue: string = this.username.value;
-    const emailValue: string = this.email.value;
-    const passwordValue: string = this.password.value;
-    const repeatPasswordValue: string = this.repeatPassword.value;
+    const usernameValue: string = validator.unescape(validator.trim(this.username.value));
+    const emailValue: string = validator.unescape(validator.trim(this.email.value));
+    const passwordValue: string = validator.unescape(validator.trim(this.password.value));
+    const repeatPasswordValue: string = validator.unescape(validator.trim(this.repeatPassword.value));
 
     if (!usernameValue) {
       return this.setFormData('username is missing');
@@ -95,8 +96,28 @@ class Register extends Component<Props, State> {
       return this.setFormData('username is too long');
     }
 
+    if (!usernameValue.match(allowedUsernameChars)) {
+      return this.setFormData('username contains invalid characters');
+    }
+
     if (!emailValue) {
       return this.setFormData('email is missing');
+    }
+
+    if (emailValue.length < 5) {
+      return this.setFormData('email is too short');
+    }
+
+    if (emailValue.length > 320) {
+      return this.setFormData('email is too long');
+    }
+
+    if (!validator.isEmail(emailValue)) {
+      return this.setFormData('email is invalid');
+    }
+
+    if (!emailValue.match(allowedEmailChars)) {
+      return this.setFormData('username contains invalid characters');
     }
 
     if (!passwordValue || !repeatPasswordValue) {
@@ -111,8 +132,15 @@ class Register extends Component<Props, State> {
       return this.setFormData('password is too long');
     }
 
+    if (
+      !passwordValue.match(allowedPasswordChars) ||
+      !repeatPasswordValue.match(allowedPasswordChars)
+    ) {
+      return this.setFormData('password contains invalid characters');
+    }
+
     if (passwordValue !== repeatPasswordValue) {
-      return this.setFormData('passwords are not the same');
+      return this.setFormData('passwords do not match');
     }
 
     this.username.value = '';

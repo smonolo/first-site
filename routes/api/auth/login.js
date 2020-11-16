@@ -1,8 +1,11 @@
 const router = require('express').Router();
 const sha1 = require('sha1');
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 const User = require('mongoose').model('user');
+
+const { allowedEmailChars, allowedPasswordChars } = require('../../../app');
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authLogin') {
@@ -18,23 +21,34 @@ router.post('/', async (req, res) => {
       return res.json({ success: false });
     }
 
+    const username = validator.unescape(validator.trim(req.body.payload.username));
+    const password = validator.unescape(validator.trim(req.body.payload.password));
+
     if (
-      req.body.payload.username.length < 3 ||
-      req.body.payload.password.length < 8 ||
-      req.body.payload.password.length > 1024
+      username.length < 3 ||
+      username.length > 320 ||
+      password.length < 8 ||
+      password.length > 1024
     ) {
       return res.json({ success: false });
     }
 
-    const passwordHash = sha1(req.body.payload.password);
+    if (
+      !username.match(allowedEmailChars) ||
+      !password.match(allowedPasswordChars)
+    ) {
+      return res.json({ success: false });
+    }
+
+    const passwordHash = sha1(password);
 
     let user;
 
     try {
       user = await User.findOne({
         $or: [
-          { username: req.body.payload.username },
-          { email: req.body.payload.username.toLowerCase() }
+          { username },
+          { email: username.toLowerCase() }
         ],
         password: passwordHash.toLowerCase()
       }).select('_id username email siteAdmin');

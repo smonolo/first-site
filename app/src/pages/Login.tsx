@@ -2,8 +2,9 @@ import React, { createRef, Component } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import validator from 'validator';
 
-import { titles } from '../constants';
+import { allowedEmailChars, allowedPasswordChars, titles } from '../constants';
 
 import { AuthState, isLogged, login, LoginResponse } from '../redux/auth';
 
@@ -76,8 +77,8 @@ class Login extends Component<Props, State> {
       }
     });
 
-    const usernameValue: string = this.username.value;
-    const passwordValue: string = this.password.value;
+    const usernameValue: string = validator.trim(validator.unescape(this.username.value));
+    const passwordValue: string = validator.trim(validator.unescape(this.password.value));
 
     if (!usernameValue) {
       return this.setFormData('username is missing');
@@ -85,6 +86,14 @@ class Login extends Component<Props, State> {
 
     if (usernameValue.length < 3) {
       return this.setFormData('username is too short');
+    }
+
+    if (usernameValue.length > 320) {
+      return this.setFormData('username is too long');
+    }
+
+    if (!usernameValue.match(allowedEmailChars)) {
+      return this.setFormData('username contains invalid characters');
     }
 
     if (!passwordValue) {
@@ -97,6 +106,10 @@ class Login extends Component<Props, State> {
 
     if (passwordValue.length > 1024) {
       return this.setFormData('password is too long');
+    }
+
+    if (!passwordValue.match(allowedPasswordChars)) {
+      return this.setFormData('password contains invalid characters');
     }
 
     this.username.value = '';
@@ -140,6 +153,7 @@ class Login extends Component<Props, State> {
             type='text'
             name='username'
             minLength={3}
+            maxLength={320}
             ref={(input: HTMLInputElement) => this.username = input}
             required
           />
