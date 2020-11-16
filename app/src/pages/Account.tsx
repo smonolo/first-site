@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
 
-import { allowedEmailChars, allowedUsernameChars, titles } from '../constants';
+import { allowedUsernameChars, titles } from '../constants';
 
 import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 
