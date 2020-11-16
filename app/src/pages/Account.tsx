@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
 
-import { titles } from '../constants';
+import { allowedEmailChars, allowedUsernameChars, titles } from '../constants';
 
 import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 
@@ -11,6 +11,7 @@ import Base from '../components/Base';
 import Loading from '../components/Loading';
 
 import { AdminBadge, Error, Input, Paragraph, ButtonRed } from '../styles';
+import validator from 'validator';
 
 interface Props {
   readonly logged: boolean;
@@ -80,7 +81,7 @@ class Account extends Component<Props, State> {
       }
     });
 
-    const deleteUsernameValue: string = this.deleteUsername.value;
+    const deleteUsernameValue: string = validator.unescape(validator.trim(this.deleteUsername.value));
 
     if (!deleteUsernameValue) {
       return this.setDeleteFormData('username is missing');
@@ -92,6 +93,10 @@ class Account extends Component<Props, State> {
 
     if (deleteUsernameValue.length > 15) {
       return this.setDeleteFormData('username is too long');
+    }
+
+    if (!deleteUsernameValue.match(allowedUsernameChars)) {
+      return this.setDeleteFormData('username contains invalid characters');
     }
 
     if (deleteUsernameValue !== this.props.auth.username) {

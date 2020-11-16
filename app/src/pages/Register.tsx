@@ -198,6 +198,8 @@ class Register extends Component<Props, State> {
           <Input
             type='email'
             name='email'
+            minLength={5}
+            maxLength={320}
             ref={(input: HTMLInputElement) => this.email = input}
             required
           />

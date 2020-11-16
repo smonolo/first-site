@@ -1,4 +1,7 @@
 import React, { Component, createRef } from 'react';
+import validator from 'validator';
+
+import { allowedUsernameChars } from '../constants';
 
 import { SearchInput, Search as SearchDiv } from '../styles';
 
@@ -8,13 +11,17 @@ class Search extends Component {
   searchProfile(event: any) {
     event.preventDefault();
 
-    const searchValue = this.search.value;
+    const searchValue: string = validator.unescape(validator.trim(this.search.value));
 
     if (!searchValue) {
       return;
     }
 
     if (searchValue.length < 3 || searchValue.length > 15) {
+      return;
+    }
+
+    if (!searchValue.match(allowedUsernameChars)) {
       return;
     }
 

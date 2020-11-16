@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 const User = require('mongoose').model('user');
+
+const { allowedEmailChars } = require('../../../app');
 
 router.post('/', (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authAccount') {
@@ -22,7 +25,21 @@ router.post('/', (req, res) => {
     }
 
     if (req.body.type === 'deleteAccount') {
-      if (result.username !== req.body.payload.username) {
+      if (!req.body.payload.username) {
+        return res.json({ success: false });
+      }
+
+      const username = validator.unescape(validator.trim(req.body.payload.username));
+
+      if (username.length < 3 || username.length > 320) {
+        return res.json({ success: false });
+      }
+
+      if (!username.match(allowedEmailChars)) {
+        return res.json({ success: false });
+      }
+
+      if (result.username !== username) {
         return res.json({ success: false });
       }
 
@@ -33,9 +50,7 @@ router.post('/', (req, res) => {
       let user;
 
       try {
-        user = await User.findOneAndDelete({
-          username: req.body.payload.username
-        }).select('_id');
+        user = await User.findOneAndDelete({ username }).select('_id');
       } catch (error) {
         return res.json({ success: false });
       }

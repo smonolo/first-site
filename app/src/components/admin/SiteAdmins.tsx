@@ -1,5 +1,8 @@
 import React, { Component, createRef } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import validator from 'validator';
+
+import { allowedEmailChars } from '../../constants';
 
 import { Button, ButtonRed, Error, Input, Paragraph } from '../../styles';
 
@@ -74,7 +77,7 @@ class SiteAdmins extends Component<Props, State> {
       }
     });
 
-    const assignUsernameValue: string = this.assignUsername.value;
+    const assignUsernameValue: string = validator.unescape(validator.trim(this.assignUsername.value));
 
     if (!assignUsernameValue) {
       return this.setAssignFormData('username is missing');
@@ -82,6 +85,14 @@ class SiteAdmins extends Component<Props, State> {
 
     if (assignUsernameValue.length < 3) {
       return this.setAssignFormData('username is too short');
+    }
+
+    if (assignUsernameValue.length > 320) {
+      return this.setAssignFormData('username is too long');
+    }
+
+    if (!assignUsernameValue.match(allowedEmailChars)) {
+      return this.setAssignFormData('username contains invalid characters');
     }
 
     this.assignUsername.value = '';
@@ -115,7 +126,7 @@ class SiteAdmins extends Component<Props, State> {
       }
     });
 
-    const revokeUsernameValue: string = this.revokeUsername.value;
+    const revokeUsernameValue: string = validator.unescape(validator.trim(this.revokeUsername.value));
 
     if (!revokeUsernameValue) {
       return this.setRevokeFormData('username is missing');
@@ -123,6 +134,14 @@ class SiteAdmins extends Component<Props, State> {
 
     if (revokeUsernameValue.length < 3) {
       return this.setRevokeFormData('username is too short');
+    }
+
+    if (revokeUsernameValue.length > 320) {
+      return this.setRevokeFormData('username is too long');
+    }
+
+    if (!revokeUsernameValue.match(allowedEmailChars)) {
+      return this.setRevokeFormData('username contains invalid characters');
     }
 
     this.revokeUsername.value = '';
@@ -157,6 +176,7 @@ class SiteAdmins extends Component<Props, State> {
           type='text'
           name='assignUsername'
           minLength={3}
+          maxLength={320}
           ref={(input: HTMLInputElement) => this.assignUsername = input}
           required
         />
@@ -176,6 +196,7 @@ class SiteAdmins extends Component<Props, State> {
           type='text'
           name='revokeUsername'
           minLength={3}
+          maxLength={320}
           ref={(input: HTMLInputElement) => this.revokeUsername = input}
           required
         />

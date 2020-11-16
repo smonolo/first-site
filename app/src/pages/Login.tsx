@@ -77,8 +77,8 @@ class Login extends Component<Props, State> {
       }
     });
 
-    const usernameValue: string = validator.trim(validator.unescape(this.username.value));
-    const passwordValue: string = validator.trim(validator.unescape(this.password.value));
+    const usernameValue: string = validator.unescape(validator.trim(this.username.value));
+    const passwordValue: string = validator.unescape(validator.trim(this.password.value));
 
     if (!usernameValue) {
       return this.setFormData('username is missing');

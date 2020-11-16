@@ -1,5 +1,8 @@
 import React, { Fragment, Component, createRef } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import validator from 'validator';
+
+import { allowedEmailChars } from '../../constants';
 
 import { Paragraph, Input, Error, ButtonRed } from '../../styles';
 
@@ -56,7 +59,7 @@ class Users extends Component<Props, State> {
       }
     });
 
-    const deleteUsernameValue: string = this.deleteUsername.value;
+    const deleteUsernameValue: string = validator.unescape(validator.trim(this.deleteUsername.value));
 
     if (!deleteUsernameValue) {
       return this.setDeleteFormData('username is missing');
@@ -64,6 +67,14 @@ class Users extends Component<Props, State> {
 
     if (deleteUsernameValue.length < 3) {
       return this.setDeleteFormData('username is too short');
+    }
+
+    if (deleteUsernameValue.length > 320) {
+      return this.setDeleteFormData('username is too long');
+    }
+
+    if (!deleteUsernameValue.match(allowedEmailChars)) {
+      return this.setDeleteFormData('username contains invalid characters');
     }
 
     this.deleteUsername.value = '';
@@ -109,6 +120,7 @@ class Users extends Component<Props, State> {
           type='text'
           name='deleteUsername'
           minLength={3}
+          maxLength={320}
           ref={(input: HTMLInputElement) => this.deleteUsername = input}
           required
         />

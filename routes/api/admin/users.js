@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 const User = require('mongoose').model('user');
+
+const { allowedEmailChars } = require('../../../app');
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'adminUsers') {
@@ -45,7 +48,13 @@ router.post('/', async (req, res) => {
         return res.json({ success: false });
       }
 
-      if (req.body.payload.username.length < 3) {
+      const username = validator.unescape(validator.trim(req.body.payload.username));
+
+      if (username.length < 3 || username.length > 320) {
+        return res.json({ success: false });
+      }
+
+      if (!username.match(allowedEmailChars)) {
         return res.json({ success: false });
       }
 
@@ -54,8 +63,8 @@ router.post('/', async (req, res) => {
       try {
         user = await User.findOneAndDelete({
           $or: [
-            { username: req.body.payload.username },
-            { email: req.body.payload.username.toLowerCase() }
+            { username },
+            { email: username.toLowerCase() }
           ]
         }).select('_id');
       } catch (error) {
