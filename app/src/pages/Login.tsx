@@ -126,7 +126,7 @@ class Login extends Component<Props, State> {
 
     const data: LoginResponse = request.data;
 
-    if (data.success && data.payload) {
+    if (data.success && data.payload && !data.error) {
       this.setFormData('');
 
       this.props.login({
@@ -134,7 +134,8 @@ class Login extends Component<Props, State> {
         ...data.payload
       });
     } else {
-      this.setFormData('invalid username or password');
+      // @ts-ignore
+      this.setFormData(data.error);
     }
   };
 

@@ -34,7 +34,7 @@ class Navigation extends Component<Props> {
 
     const data: LoginResponse = request.data;
 
-    if (data.success && data.payload) {
+    if (data.success && data.payload && !data.error) {
       this.props.login({
         logged: true,
         ...data.payload

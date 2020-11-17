@@ -16,6 +16,7 @@ export type AuthDispatch = (action: AuthAction) => void;
 
 export interface LoginResponse {
   readonly success: boolean;
+  readonly error?: string;
   readonly payload?: {
     readonly jwt: string;
     readonly id: string;

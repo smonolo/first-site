@@ -6,7 +6,7 @@ import { allowedEmailChars } from '../../constants';
 
 import { LoginResponse, AuthState } from '../../redux/auth';
 
-import { Paragraph, Input, Error, ButtonRed, Button } from '../../styles';
+import { Paragraph, Input, Error, Info, ButtonRed, Button } from '../../styles';
 
 interface Props {
   readonly loading: boolean;
@@ -16,13 +16,15 @@ interface Props {
 }
 
 type State = {
-  deleteError: string,
-  deleteButton: {
+  loginError: string,
+  loginInfo: string,
+  loginButton: {
     text: string,
     disabled: boolean
   },
-  loginError: string,
-  loginButton: {
+  deleteError: string,
+  deleteInfo: string,
+  deleteButton: {
     text: string,
     disabled: boolean
   }
@@ -30,6 +32,7 @@ type State = {
 
 interface DeleteUserResponse {
   readonly success: boolean;
+  readonly error?: string;
 }
 
 class Users extends Component<Props, State> {
@@ -40,32 +43,25 @@ class Users extends Component<Props, State> {
     super(props);
 
     this.state = {
-      deleteError: '',
-      deleteButton: {
-        text: 'delete',
-        disabled: false
-      },
       loginError: '',
+      loginInfo: '',
       loginButton: {
         text: 'login',
+        disabled: false
+      },
+      deleteError: '',
+      deleteInfo: '',
+      deleteButton: {
+        text: 'delete',
         disabled: false
       }
     };
   };
 
-  setDeleteFormData(deleteError: string) {
-    this.setState({
-      deleteError,
-      deleteButton: {
-        text: 'delete',
-        disabled: false
-      }
-    });
-  };
-
-  setLoginFormData(loginError: string) {
+  setLoginFormData(loginError: string = '', loginInfo: string = '') {
     this.setState({
       loginError,
+      loginInfo,
       loginButton: {
         text: 'login',
         disabled: false
@@ -73,53 +69,15 @@ class Users extends Component<Props, State> {
     });
   };
 
-  async deleteUser(event: any) {
-    event.preventDefault();
-
+  setDeleteFormData(deleteError: string = '', deleteInfo: string = '') {
     this.setState({
-      deleteError: '',
+      deleteError,
+      deleteInfo,
       deleteButton: {
-        text: 'loading',
-        disabled: true
+        text: 'delete',
+        disabled: false
       }
     });
-
-    const deleteUsernameValue: string = validator.unescape(validator.trim(this.deleteUsername.value));
-
-    if (!deleteUsernameValue) {
-      return this.setDeleteFormData('username is missing');
-    }
-
-    if (deleteUsernameValue.length < 3) {
-      return this.setDeleteFormData('username is too short');
-    }
-
-    if (deleteUsernameValue.length > 320) {
-      return this.setDeleteFormData('username is too long');
-    }
-
-    if (!deleteUsernameValue.match(allowedEmailChars)) {
-      return this.setDeleteFormData('username contains invalid characters');
-    }
-
-    this.deleteUsername.value = '';
-
-    const request: AxiosResponse = await axios.post('/api/admin/users', {
-      auth: 'adminUsers',
-      type: 'deleteUser',
-      payload: {
-        jwt: localStorage.getItem('jwt'),
-        username: deleteUsernameValue
-      }
-    });
-
-    const data: DeleteUserResponse = request.data;
-
-    if (data.success) {
-      this.setDeleteFormData('');
-    } else {
-      this.setDeleteFormData('could not delete user');
-    }
   };
 
   async loginAsUser(event: any) {
@@ -127,6 +85,7 @@ class Users extends Component<Props, State> {
 
     this.setState({
       loginError: '',
+      loginInfo: '',
       loginButton: {
         text: 'loading',
         disabled: true
@@ -164,17 +123,77 @@ class Users extends Component<Props, State> {
 
     const data: LoginResponse = request.data;
 
-    if (data.success && data.payload) {
-      this.setLoginFormData('');
+    if (data.success && data.payload && !data.error) {
+      this.setLoginFormData('', 'logging in as user');
 
-      this.props.logout();
+      setTimeout(() => {
+        this.setState({ loginInfo: '' });
 
-      this.props.login({
-        logged: true,
-        ...data.payload
-      });
+        this.props.logout();
+
+        // for some reason, this doesn't work with typescript
+        // @ts-ignore
+        this.props.login({
+          logged: true,
+          ...data.payload
+        });
+      }, 5000);
     } else {
-      this.setLoginFormData('could not login as user');
+      this.setLoginFormData(data.error);
+    }
+  };
+
+  async deleteUser(event: any) {
+    event.preventDefault();
+
+    this.setState({
+      deleteError: '',
+      deleteInfo: '',
+      deleteButton: {
+        text: 'loading',
+        disabled: true
+      }
+    });
+
+    const deleteUsernameValue: string = validator.unescape(validator.trim(this.deleteUsername.value));
+
+    if (!deleteUsernameValue) {
+      return this.setDeleteFormData('username is missing');
+    }
+
+    if (deleteUsernameValue.length < 3) {
+      return this.setDeleteFormData('username is too short');
+    }
+
+    if (deleteUsernameValue.length > 320) {
+      return this.setDeleteFormData('username is too long');
+    }
+
+    if (!deleteUsernameValue.match(allowedEmailChars)) {
+      return this.setDeleteFormData('username contains invalid characters');
+    }
+
+    this.deleteUsername.value = '';
+
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
+      auth: 'adminUsers',
+      type: 'deleteUser',
+      payload: {
+        jwt: localStorage.getItem('jwt'),
+        username: deleteUsernameValue
+      }
+    });
+
+    const data: DeleteUserResponse = request.data;
+
+    if (data.success && !data.error) {
+      this.setDeleteFormData('', 'user deleted');
+
+      setTimeout(() => {
+        this.setState({ deleteInfo: '' });
+      }, 5000);
+    } else {
+      this.setDeleteFormData(data.error);
     }
   };
 
@@ -195,6 +214,7 @@ class Users extends Component<Props, State> {
         login as user
         <br /><br />
         {this.state.loginError && <Error>{this.state.loginError}</Error>}
+        {this.state.loginInfo && <Info>{this.state.loginInfo}</Info>}
         username or email
         <br />
         <Input
@@ -217,6 +237,7 @@ class Users extends Component<Props, State> {
         delete user
         <br /><br />
         {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
+        {this.state.deleteInfo && <Info>{this.state.deleteInfo}</Info>}
         username or email
         <br />
         <Input

@@ -10,11 +10,17 @@ const { allowedUsernameChars, allowedEmailChars, allowedPasswordChars } = requir
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authRegister') {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 
   if (!req.body.type || !req.body.payload) {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 
   if (req.body.type === 'register') {
@@ -24,7 +30,10 @@ router.post('/', async (req, res) => {
       !req.body.payload.password ||
       !req.body.payload.repeatPassword
     ) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'username, email or password is missing'
+      });
     }
 
     const username = validator.unescape(validator.trim(req.body.payload.username));
@@ -42,11 +51,17 @@ router.post('/', async (req, res) => {
       repeatPassword.length < 8 ||
       repeatPassword.length > 1024
     ) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'username, email or password length is invalid'
+      });
     }
 
     if (!validator.isEmail(email)) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'email is invalid'
+      });
     }
 
     if (
@@ -55,11 +70,17 @@ router.post('/', async (req, res) => {
       !password.match(allowedPasswordChars) ||
       !repeatPassword.match(allowedPasswordChars)
     ) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'username, email or password includes invalid characters'
+      });
     }
 
     if (password !== repeatPassword) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'passwords do not match'
+      });
     }
 
     let user;
@@ -72,11 +93,17 @@ router.post('/', async (req, res) => {
         ]
       });
     } catch (error) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'internal error'
+      });
     }
 
     if (user) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'could not find user'
+      });
     }
 
     const id = uuid.v4();
@@ -94,7 +121,10 @@ router.post('/', async (req, res) => {
     try {
       await User.create(userDocument);
     } catch (error) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'internal error'
+      });
     }
 
     const jwtContent = {
@@ -114,7 +144,10 @@ router.post('/', async (req, res) => {
       }
     });
   } else {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 });
 

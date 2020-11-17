@@ -8,44 +8,71 @@ const { allowedUsernameChars } = require('../../../app');
 
 router.post('/', (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authAccount') {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 
   if (!req.body.payload || !req.body.payload.jwt) {
-    res.json({ success: false });
+    res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 
   try {
     jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
       if (error) {
-        return res.json({ success: false });
+        return res.json({
+          success: false,
+          error: 'internal error'
+        });
       }
 
       if (!req.body.type) {
-        return res.json({ success: false });
+        return res.json({
+          success: false,
+          error: 'invalid request'
+        });
       }
 
       if (req.body.type === 'deleteAccount') {
         if (!req.body.payload.username) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username is missing'
+          });
         }
 
         const username = validator.unescape(validator.trim(req.body.payload.username));
 
         if (username.length < 3 || username.length > 15) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username length is invalid'
+          });
         }
 
         if (!username.match(allowedUsernameChars)) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username contains invalid characters'
+          });
         }
 
         if (result.username !== username) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username is invalid'
+          });
         }
 
         if (result.siteAdmin) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'cannot delete account as site admin'
+          });
         }
 
         let user;
@@ -53,31 +80,49 @@ router.post('/', (req, res) => {
         try {
           user = await User.findOneAndDelete({ username }).select('_id');
         } catch (error) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'internal error'
+          });
         }
 
         if (!user) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'could not find user'
+          });
         }
 
         return res.json({ success: true });
       } else if (req.body.type === 'updateUsername') {
         if (!req.body.payload.username) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username is missing'
+          });
         }
 
         const username = validator.unescape(validator.trim(req.body.payload.username));
 
         if (username.length < 3 || username.length > 15) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username length is invalid'
+          });
         }
 
         if (!username.match(allowedUsernameChars)) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username contains invalid characters'
+          });
         }
 
         if (result.username === username) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'username is invalid'
+          });
         }
 
         let user;
@@ -93,20 +138,32 @@ router.post('/', (req, res) => {
             useFindAndModify: false
           }).select('_id');
         } catch (error) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'internal error'
+          });
         }
 
         if (!user) {
-          return res.json({ success: false });
+          return res.json({
+            success: false,
+            error: 'could not find user'
+          });
         }
 
         return res.json({ success: true });
       } else {
-        return res.json({ success: false });
+        return res.json({
+          success: false,
+          error: 'invalid request'
+        });
       }
     });
   } catch (error) {
-    res.json({ success: false });
+    res.json({
+      success: false,
+      error: 'internal error'
+    });
   }
 });
 

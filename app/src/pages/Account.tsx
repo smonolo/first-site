@@ -11,7 +11,7 @@ import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 import Base from '../components/Base';
 import Loading from '../components/Loading';
 
-import { AdminBadge, Error, Input, Paragraph, ButtonRed, Button } from '../styles';
+import { AdminBadge, Error, Info, Input, Paragraph, ButtonRed, Button } from '../styles';
 
 interface Props {
   readonly logged: boolean;
@@ -21,11 +21,13 @@ interface Props {
 
 type State = {
   updateError: string,
+  updateInfo: string,
   updateButton: {
     text: string,
     disabled: boolean
   },
   deleteError: string,
+  deleteInfo: string,
   deleteButton: {
     text: string,
     disabled: boolean
@@ -34,6 +36,7 @@ type State = {
 
 interface RequestData {
   readonly success: boolean;
+  readonly error?: string;
 }
 
 class Account extends Component<Props, State> {
@@ -47,11 +50,13 @@ class Account extends Component<Props, State> {
 
     this.state = {
       updateError: '',
+      updateInfo: '',
       updateButton: {
         text: 'update',
         disabled: false
       },
       deleteError: '',
+      deleteInfo: '',
       deleteButton: {
         text: 'delete',
         disabled: false
@@ -71,9 +76,10 @@ class Account extends Component<Props, State> {
     }
   };
 
-  setUpdateFormData(updateError: string) {
+  setUpdateFormData(updateError: string = '', updateInfo: string = '') {
     this.setState({
       updateError,
+      updateInfo,
       updateButton: {
         text: 'update',
         disabled: false
@@ -81,9 +87,10 @@ class Account extends Component<Props, State> {
     });
   };
 
-  setDeleteFormData(deleteError: string) {
+  setDeleteFormData(deleteError: string = '', deleteInfo: string = '') {
     this.setState({
       deleteError,
+      deleteInfo,
       deleteButton: {
         text: 'delete',
         disabled: false
@@ -96,6 +103,7 @@ class Account extends Component<Props, State> {
 
     this.setState({
       updateError: '',
+      updateInfo: '',
       updateButton: {
         text: 'update',
         disabled: true
@@ -105,23 +113,23 @@ class Account extends Component<Props, State> {
     const updateUsernameValue: string = validator.unescape(validator.trim(this.updateUsername.value));
 
     if (!updateUsernameValue) {
-      return this.setDeleteFormData('username is missing');
+      return this.setUpdateFormData('username is missing');
     }
 
     if (updateUsernameValue.length < 3) {
-      return this.setDeleteFormData('username is too short');
+      return this.setUpdateFormData('username is too short');
     }
 
     if (updateUsernameValue.length > 15) {
-      return this.setDeleteFormData('username is too long');
+      return this.setUpdateFormData('username is too long');
     }
 
     if (!updateUsernameValue.match(allowedUsernameChars)) {
-      return this.setDeleteFormData('username contains invalid characters');
+      return this.setUpdateFormData('username contains invalid characters');
     }
 
     if (updateUsernameValue === this.props.auth.username) {
-      return this.setDeleteFormData('username is already in use');
+      return this.setUpdateFormData('username is already in use');
     }
 
     this.updateUsername.value = '';
@@ -137,10 +145,14 @@ class Account extends Component<Props, State> {
 
     const data: RequestData = request.data;
 
-    if (data.success) {
-      this.setUpdateFormData('');
+    if (data.success && !data.error) {
+      this.setUpdateFormData('', 'username updated');
+
+      setTimeout(() => {
+        this.setState({ updateInfo: '' });
+      }, 5000);
     } else {
-      this.setUpdateFormData('could not update username');
+      this.setUpdateFormData(data.error);
     }
   };
 
@@ -149,6 +161,7 @@ class Account extends Component<Props, State> {
 
     this.setState({
       deleteError: '',
+      deleteInfo: '',
       deleteButton: {
         text: 'loading',
         disabled: true
@@ -194,12 +207,16 @@ class Account extends Component<Props, State> {
 
     const data: RequestData = request.data;
 
-    if (data.success) {
-      this.setDeleteFormData('');
+    if (data.success && !data.error) {
+      this.setDeleteFormData('', 'account deleted, logging you out');
 
-      this.props.logout();
+      setTimeout(() => {
+        this.setState({ deleteInfo: '' });
+
+        this.props.logout();
+      }, 5000);
     } else {
-      this.setDeleteFormData('could not delete account');
+      this.setDeleteFormData(data.error);
     }
   };
 
@@ -224,9 +241,10 @@ class Account extends Component<Props, State> {
         </Paragraph>
         <br />
         <Paragraph>
-          {this.state.updateError && <Error>{this.state.updateError}</Error>}
           update username
           <br /><br />
+          {this.state.updateError && <Error>{this.state.updateError}</Error>}
+          {this.state.updateInfo && <Info>{this.state.updateInfo}</Info>}
           new username
           <br />
           <Input
@@ -248,9 +266,10 @@ class Account extends Component<Props, State> {
         </Paragraph>
         <br />
         <Paragraph>
-          {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
           delete account
           <br /><br />
+          {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
+          {this.state.deleteInfo && <Info>{this.state.deleteInfo}</Info>}
           username
           <br />
           <Input

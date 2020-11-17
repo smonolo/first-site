@@ -72,6 +72,10 @@ export const Error = styled.div`
   margin-bottom: 10px;
 `;
 
+export const Info = styled(Error)`
+  background-color: ${mainColor};
+`;
+
 export const Input = styled.input`
   padding: 4px 8px;
   box-sizing: border-box;

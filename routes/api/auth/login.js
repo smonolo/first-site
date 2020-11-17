@@ -9,16 +9,25 @@ const { allowedEmailChars, allowedPasswordChars } = require('../../../app');
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authLogin') {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 
   if (!req.body.type || !req.body.payload) {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 
   if (req.body.type === 'login') {
     if (!req.body.payload.username || !req.body.payload.password) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'username or password is missing'
+      });
     }
 
     const username = validator.unescape(validator.trim(req.body.payload.username));
@@ -30,14 +39,20 @@ router.post('/', async (req, res) => {
       password.length < 8 ||
       password.length > 1024
     ) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'username or password length is invalid'
+      });
     }
 
     if (
       !username.match(allowedEmailChars) ||
       !password.match(allowedPasswordChars)
     ) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'username or password includes invalid characters'
+      });
     }
 
     let user;
@@ -50,15 +65,24 @@ router.post('/', async (req, res) => {
         ]
       }).select('_id username email password siteAdmin');
     } catch (error) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'internal error'
+      });
     }
 
     if (!user) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'could not find user'
+      });
     }
 
     if (!bcrypt.compareSync(password, user.password)) {
-      return res.json({ success: false });
+      return res.json({
+        success: false,
+        error: 'password is invalid'
+      });
     }
 
     const jwtContent = {
@@ -78,7 +102,10 @@ router.post('/', async (req, res) => {
       }
     });
   } else {
-    return res.json({ success: false });
+    return res.json({
+      success: false,
+      error: 'invalid request'
+    });
   }
 });
 

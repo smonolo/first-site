@@ -4,17 +4,19 @@ import validator from 'validator';
 
 import { allowedEmailChars } from '../../constants';
 
-import { Button, ButtonRed, Error, Input, Paragraph } from '../../styles';
+import { Button, ButtonRed, Error, Info, Input, Paragraph } from '../../styles';
 
 interface Props {}
 
 type State = {
   assignError: string,
+  assignInfo: string,
   assignButton: {
     text: string,
     disabled: boolean
   },
   revokeError: string,
+  revokeInfo: string,
   revokeButton: {
     text: string,
     disabled: boolean
@@ -23,6 +25,7 @@ type State = {
 
 interface SiteAdminResponse {
   readonly success: boolean;
+  readonly error?: string;
 }
 
 class SiteAdmins extends Component<Props, State> {
@@ -34,11 +37,13 @@ class SiteAdmins extends Component<Props, State> {
 
     this.state = {
       assignError: '',
+      assignInfo: '',
       assignButton: {
         text: 'assign',
         disabled: false
       },
       revokeError: '',
+      revokeInfo: '',
       revokeButton: {
         text: 'revoke',
         disabled: false
@@ -46,9 +51,10 @@ class SiteAdmins extends Component<Props, State> {
     };
   };
 
-  setAssignFormData(assignError: string) {
+  setAssignFormData(assignError: string = '', assignInfo: string = '') {
     this.setState({
       assignError,
+      assignInfo,
       assignButton: {
         text: 'assign',
         disabled: false
@@ -56,9 +62,10 @@ class SiteAdmins extends Component<Props, State> {
     });
   };
 
-  setRevokeFormData(revokeError: string) {
+  setRevokeFormData(revokeError: string = '', revokeInfo: string = '') {
     this.setState({
       revokeError,
+      revokeInfo,
       revokeButton: {
         text: 'revoke',
         disabled: false
@@ -71,6 +78,7 @@ class SiteAdmins extends Component<Props, State> {
 
     this.setState({
       assignError: '',
+      assignInfo: '',
       assignButton: {
         text: 'loading',
         disabled: true
@@ -108,10 +116,14 @@ class SiteAdmins extends Component<Props, State> {
 
     const data: SiteAdminResponse = request.data;
 
-    if (data.success) {
-      this.setAssignFormData('');
+    if (data.success && !data.error) {
+      this.setAssignFormData('', 'site admin assigned');
+
+      setTimeout(() => {
+        this.setState({ assignInfo: '' });
+      }, 5000);
     } else {
-      this.setAssignFormData('could not assign site admin');
+      this.setAssignFormData(data.error);
     }
   };
 
@@ -120,6 +132,7 @@ class SiteAdmins extends Component<Props, State> {
 
     this.setState({
       revokeError: '',
+      revokeInfo: '',
       revokeButton: {
         text: 'loading',
         disabled: true
@@ -157,10 +170,14 @@ class SiteAdmins extends Component<Props, State> {
 
     const data: SiteAdminResponse = request.data;
 
-    if (data.success) {
-      this.setRevokeFormData('');
+    if (data.success && !data.error) {
+      this.setRevokeFormData('', 'site admin revoked');
+
+      setTimeout(() => {
+        this.setState({ revokeInfo: '' });
+      }, 5000);
     } else {
-      this.setRevokeFormData('could not revoke site admin');
+      this.setRevokeFormData(data.error);
     }
   };
 
@@ -170,6 +187,7 @@ class SiteAdmins extends Component<Props, State> {
         site admins
         <br /><br />
         {this.state.assignError && (<Error>{this.state.assignError}</Error>)}
+        {this.state.assignInfo && (<Info>{this.state.assignInfo}</Info>)}
         assign site admin
         <br />
         <Input
@@ -190,6 +208,7 @@ class SiteAdmins extends Component<Props, State> {
         </Button>
         <br /><br />
         {this.state.revokeError && (<Error>{this.state.revokeError}</Error>)}
+        {this.state.revokeInfo && (<Info>{this.state.revokeInfo}</Info>)}
         revoke site admin
         <br />
         <Input
