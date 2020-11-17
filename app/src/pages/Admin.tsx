@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 
 import { titles } from '../constants';
 
-import { isLogged, isSiteAdmin } from '../redux/auth';
+import { AuthState, isLogged, isSiteAdmin, login, logout } from '../redux/auth';
 import { fetchUsers, getUsers } from '../redux/admin';
 
 import SiteAdmins from '../components/admin/SiteAdmins';
@@ -18,6 +18,8 @@ interface Props {
   readonly siteAdmin: boolean;
   readonly fetchUsers: Function;
   readonly users: Array<string>;
+  readonly login: (payload: AuthState) => void;
+  readonly logout: Function;
 }
 
 type State = {
@@ -65,6 +67,8 @@ class Admin extends Component<Props, State> {
         <Users
           loading={this.state.loading}
           users={this.props.users}
+          login={this.props.login}
+          logout={this.props.logout}
         />
         <br />
         <SiteAdmins />
@@ -81,7 +85,9 @@ const mapStateToProps = createSelector(
 );
 
 const mapDispatchToProps = {
-  fetchUsers
+  fetchUsers,
+  login,
+  logout
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Admin);

@@ -4,16 +4,25 @@ import validator from 'validator';
 
 import { allowedEmailChars } from '../../constants';
 
-import { Paragraph, Input, Error, ButtonRed } from '../../styles';
+import { LoginResponse, AuthState } from '../../redux/auth';
+
+import { Paragraph, Input, Error, ButtonRed, Button } from '../../styles';
 
 interface Props {
   readonly loading: boolean;
   readonly users: Array<string>;
+  readonly login: (payload: AuthState) => void;
+  readonly logout: Function;
 }
 
 type State = {
   deleteError: string,
   deleteButton: {
+    text: string,
+    disabled: boolean
+  },
+  loginError: string,
+  loginButton: {
     text: string,
     disabled: boolean
   }
@@ -25,6 +34,7 @@ interface DeleteUserResponse {
 
 class Users extends Component<Props, State> {
   private deleteUsername: any = createRef();
+  private loginUsername: any = createRef();
 
   constructor(props: Props) {
     super(props);
@@ -33,6 +43,11 @@ class Users extends Component<Props, State> {
       deleteError: '',
       deleteButton: {
         text: 'delete',
+        disabled: false
+      },
+      loginError: '',
+      loginButton: {
+        text: 'login',
         disabled: false
       }
     };
@@ -43,6 +58,16 @@ class Users extends Component<Props, State> {
       deleteError,
       deleteButton: {
         text: 'delete',
+        disabled: false
+      }
+    });
+  };
+
+  setLoginFormData(loginError: string) {
+    this.setState({
+      loginError,
+      loginButton: {
+        text: 'login',
         disabled: false
       }
     });
@@ -97,6 +122,62 @@ class Users extends Component<Props, State> {
     }
   };
 
+  async loginAsUser(event: any) {
+    event.preventDefault();
+
+    this.setState({
+      loginError: '',
+      loginButton: {
+        text: 'loading',
+        disabled: true
+      }
+    });
+
+    const loginUsernameValue: string = validator.unescape(validator.trim(this.loginUsername.value));
+
+    if (!loginUsernameValue) {
+      return this.setLoginFormData('username is missing');
+    }
+
+    if (loginUsernameValue.length < 3) {
+      return this.setLoginFormData('username is too short');
+    }
+
+    if (loginUsernameValue.length > 320) {
+      return this.setLoginFormData('username is too long');
+    }
+
+    if (!loginUsernameValue.match(allowedEmailChars)) {
+      return this.setLoginFormData('username contains invalid characters');
+    }
+
+    this.loginUsername.value = '';
+
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
+      auth: 'adminUsers',
+      type: 'loginAsUser',
+      payload: {
+        jwt: localStorage.getItem('jwt'),
+        username: loginUsernameValue
+      }
+    });
+
+    const data: LoginResponse = request.data;
+
+    if (data.success && data.payload) {
+      this.setLoginFormData('');
+
+      this.props.logout();
+
+      this.props.login({
+        logged: true,
+        ...data.payload
+      });
+    } else {
+      this.setLoginFormData('could not login as user');
+    }
+  };
+
   render() {
     return (
       <Paragraph>
@@ -111,9 +192,31 @@ class Users extends Component<Props, State> {
           </Fragment>
         )}
         <br /><br />
-        {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
+        login as user
+        <br /><br />
+        {this.state.loginError && <Error>{this.state.loginError}</Error>}
+        username or email
+        <br />
+        <Input
+          type='text'
+          name='loginUsername'
+          minLength={3}
+          maxLength={320}
+          ref={(input: HTMLInputElement) => this.loginUsername = input}
+          required
+        />
+        <br /><br />
+        <Button
+          type='submit'
+          disabled={this.state.loginButton.disabled}
+          onClick={event => this.loginAsUser(event)}
+        >
+          {this.state.loginButton.text}
+        </Button>
+        <br /><br />
         delete user
         <br /><br />
+        {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
         username or email
         <br />
         <Input

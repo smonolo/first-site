@@ -76,6 +76,54 @@ router.post('/', async (req, res) => {
       }
 
       return res.json({ success: true });
+    } else if (req.body.type === 'loginAsUser') {
+      if (!req.body.payload.username) {
+        return res.json({ success: false });
+      }
+
+      const username = validator.unescape(validator.trim(req.body.payload.username));
+
+      if (username.length < 3 || username.length > 320) {
+        return res.json({ success: false });
+      }
+
+      if (!username.match(allowedEmailChars)) {
+        return res.json({ success: false });
+      }
+
+      let user;
+
+      try {
+        user = await User.findOne({
+          $or: [
+            { username },
+            { email: username.toLowerCase() }
+          ]
+        }).select('_id username email siteAdmin');
+      } catch (error) {
+        return res.json({ success: false });
+      }
+
+      if (!user) {
+        return res.json({ success: false });
+      }
+
+      const jwtContent = {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        siteAdmin: user.siteAdmin
+      };
+
+      const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);
+
+      return res.json({
+        success: true,
+        payload: {
+          jwt: jwtValue,
+          ...jwtContent
+        }
+      });
     } else {
       return res.json({ success: false });
     }
