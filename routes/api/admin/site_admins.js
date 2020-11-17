@@ -15,58 +15,62 @@ router.post('/', async (req, res) => {
     return res.json({ success: false });
   }
 
-  jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
-    if (error || !result.siteAdmin) {
-      return res.json({ success: false });
-    }
-
-    if (!req.body.type) {
-      return res.json({ success: false });
-    }
-
-    if (['assignSiteAdmin', 'revokeSiteAdmin'].includes(req.body.type)) {
-      if (!req.body.payload.username) {
+  try {
+    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
+      if (error || !result.siteAdmin) {
         return res.json({ success: false });
       }
 
-      const username = validator.unescape(validator.trim(req.body.payload.username));
-
-      if (username.length < 3 || username.length > 320) {
+      if (!req.body.type) {
         return res.json({ success: false });
       }
 
-      if (!username.match(allowedEmailChars)) {
+      if (['assignSiteAdmin', 'revokeSiteAdmin'].includes(req.body.type)) {
+        if (!req.body.payload.username) {
+          return res.json({ success: false });
+        }
+
+        const username = validator.unescape(validator.trim(req.body.payload.username));
+
+        if (username.length < 3 || username.length > 320) {
+          return res.json({ success: false });
+        }
+
+        if (!username.match(allowedEmailChars)) {
+          return res.json({ success: false });
+        }
+
+        let user;
+
+        try {
+          user = await User.findOneAndUpdate({
+            $or: [
+              { username },
+              { email: username.toLowerCase() }
+            ]
+          }, {
+            $set: {
+              siteAdmin: req.body.type === 'assignSiteAdmin'
+            }
+          }, {
+            useFindAndModify: false
+          }).select('_id');
+        } catch (error) {
+          return res.json({ success: false });
+        }
+
+        if (!user) {
+          return res.json({ success: false });
+        }
+
+        return res.json({ success: true });
+      } else {
         return res.json({ success: false });
       }
-
-      let user;
-
-      try {
-        user = await User.findOneAndUpdate({
-          $or: [
-            { username },
-            { email: username.toLowerCase() }
-          ]
-        }, {
-          $set: {
-            siteAdmin: req.body.type === 'assignSiteAdmin'
-          }
-        }, {
-          useFindAndModify: false
-        }).select('_id');
-      } catch (error) {
-        return res.json({ success: false });
-      }
-
-      if (!user) {
-        return res.json({ success: false });
-      }
-
-      return res.json({ success: true });
-    } else {
-      return res.json({ success: false });
-    }
-  });
+    });
+  } catch (error) {
+    return res.json({ success: false });
+  }
 });
 
 module.exports = router;

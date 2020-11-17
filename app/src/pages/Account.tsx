@@ -139,8 +139,6 @@ class Account extends Component<Props, State> {
 
     if (data.success) {
       this.setUpdateFormData('');
-
-      this.props.logout();
     } else {
       this.setUpdateFormData('could not update username');
     }
