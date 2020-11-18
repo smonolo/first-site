@@ -4,7 +4,7 @@ const validator = require('validator');
 
 const User = require('mongoose').model('user');
 
-const { allowedUsernameChars } = require('../../../app');
+const { allowedUsernameChars, allowedEmailChars } = require('../../../app');
 
 router.post('/', (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authAccount') {
@@ -133,6 +133,71 @@ router.post('/', (req, res) => {
           }, {
             $set: {
               username
+            }
+          }, {
+            useFindAndModify: false
+          }).select('_id');
+        } catch (error) {
+          return res.json({
+            success: false,
+            error: 'internal error'
+          });
+        }
+
+        if (!user) {
+          return res.json({
+            success: false,
+            error: 'could not find user'
+          });
+        }
+
+        return res.json({ success: true });
+      }  else if (req.body.type === 'updateEmail') {
+        if (!req.body.payload.email) {
+          return res.json({
+            success: false,
+            error: 'email is missing'
+          });
+        }
+
+        const email = validator.unescape(validator.trim(req.body.payload.email));
+
+        if (email.length < 5 || email.length > 320) {
+          return res.json({
+            success: false,
+            error: 'email length is invalid'
+          });
+        }
+
+        if (!email.match(allowedEmailChars)) {
+          return res.json({
+            success: false,
+            error: 'email contains invalid characters'
+          });
+        }
+
+        if (!validator.isEmail(email)) {
+          return res.json({
+            success: false,
+            error: 'email is invalid'
+          });
+        }
+
+        if (result.email === email) {
+          return res.json({
+            success: false,
+            error: 'email is invalid'
+          });
+        }
+
+        let user;
+
+        try {
+          user = await User.findOneAndUpdate({
+            _id: result.id
+          }, {
+            $set: {
+              email
             }
           }, {
             useFindAndModify: false

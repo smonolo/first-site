@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
 import validator from 'validator';
 
-import { allowedUsernameChars, titles } from '../constants';
+import { allowedEmailChars, allowedUsernameChars, titles } from '../constants';
 
 import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 
@@ -26,6 +26,12 @@ type State = {
     text: string,
     disabled: boolean
   },
+  updateEmailError: string,
+  updateEmailInfo: string,
+  updateEmailButton: {
+    text: string,
+    disabled: boolean
+  },
   deleteError: string,
   deleteInfo: string,
   deleteButton: {
@@ -43,6 +49,7 @@ class Account extends Component<Props, State> {
   private title: string = titles.account;
 
   private updateUsername: any = createRef();
+  private updateEmail: any = createRef();
   private deleteUsername: any = createRef();
 
   constructor(props: Props) {
@@ -52,6 +59,12 @@ class Account extends Component<Props, State> {
       updateError: '',
       updateInfo: '',
       updateButton: {
+        text: 'update',
+        disabled: false
+      },
+      updateEmailError: '',
+      updateEmailInfo: '',
+      updateEmailButton: {
         text: 'update',
         disabled: false
       },
@@ -81,6 +94,17 @@ class Account extends Component<Props, State> {
       updateError,
       updateInfo,
       updateButton: {
+        text: 'update',
+        disabled: false
+      }
+    });
+  };
+
+  setUpdateEmailFormData(updateEmailError: string = '', updateEmailInfo: string = '') {
+    this.setState({
+      updateEmailError,
+      updateEmailInfo,
+      updateEmailButton: {
         text: 'update',
         disabled: false
       }
@@ -153,6 +177,68 @@ class Account extends Component<Props, State> {
       }, 5000);
     } else {
       this.setUpdateFormData(data.error);
+    }
+  };
+
+  async changeEmail(event: any) {
+    event.preventDefault();
+
+    this.setState({
+      updateEmailError: '',
+      updateEmailInfo: '',
+      updateEmailButton: {
+        text: 'update',
+        disabled: true
+      }
+    });
+
+    const updateEmailValue: string = validator.unescape(validator.trim(this.updateEmail.value));
+
+    if (!updateEmailValue) {
+      return this.setUpdateEmailFormData('email is missing');
+    }
+
+    if (updateEmailValue.length < 5) {
+      return this.setUpdateEmailFormData('email is too short');
+    }
+
+    if (updateEmailValue.length > 320) {
+      return this.setUpdateEmailFormData('email is too long');
+    }
+
+    if (!updateEmailValue.match(allowedEmailChars)) {
+      return this.setUpdateEmailFormData('email contains invalid characters');
+    }
+
+    if (!validator.isEmail(updateEmailValue)) {
+      return this.setUpdateEmailFormData('email is invalid');
+    }
+
+    if (updateEmailValue === this.props.auth.email) {
+      return this.setUpdateEmailFormData('email is already in use');
+    }
+
+    this.updateEmail.value = '';
+
+    const request: AxiosResponse = await axios.post('/api/auth/account', {
+      auth: 'authAccount',
+      type: 'updateEmail',
+      payload: {
+        jwt: this.props.auth.jwt,
+        email: updateEmailValue,
+      }
+    });
+
+    const data: RequestData = request.data;
+
+    if (data.success && !data.error) {
+      this.setUpdateEmailFormData('', 'email updated');
+
+      setTimeout(() => {
+        this.setState({ updateEmailInfo: '' });
+      }, 5000);
+    } else {
+      this.setUpdateEmailFormData(data.error);
     }
   };
 
@@ -262,6 +348,31 @@ class Account extends Component<Props, State> {
             onClick={event => this.changeUsername(event)}
           >
             {this.state.updateButton.text}
+          </Button>
+        </Paragraph>
+        <br />
+        <Paragraph>
+          update email
+          <br /><br />
+          {this.state.updateEmailError && <Error>{this.state.updateEmailError}</Error>}
+          {this.state.updateEmailInfo && <Info>{this.state.updateEmailInfo}</Info>}
+          new email
+          <br />
+          <Input
+            type='email'
+            name='updateEmail'
+            minLength={5}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.updateEmail = input}
+            required
+          />
+          <br /><br />
+          <Button
+            type='submit'
+            disabled={this.state.updateEmailButton.disabled}
+            onClick={event => this.changeEmail(event)}
+          >
+            {this.state.updateEmailButton.text}
           </Button>
         </Paragraph>
         <br />
