@@ -7,6 +7,10 @@ const theme = localStorage.getItem('theme');
 const light = !theme || theme !== 'dark';
 
 export const GlobalStyle = createGlobalStyle`
+  * {
+    font-family: 'Consolas', sans-serif;
+  }
+
   body {
     user-select: none;
     margin: 0;
@@ -30,13 +34,22 @@ export const Anchor = styled.a`
   }
 `;
 
-export const Box = styled.div`
-  padding: 50px 70px;
+export const Container = styled.div`
   width: 700px;
   margin: 25vh auto;
-  background-color: ${light ? '#eeeeee' : '#222222'};
   max-width: 90%;
   box-sizing: border-box;
+`;
+
+export const Box = styled.div`
+  padding: 50px;
+  width: 100%;
+  background-color: ${light ? '#eeeeee' : '#222222'};
+  box-sizing: border-box;
+`;
+
+export const NavBox = styled(Box)`
+  padding: 30px 50px;
 `;
 
 export const Button = styled.button`
@@ -47,7 +60,6 @@ export const Button = styled.button`
   background-color: ${mainColor};
   border: none;
   color: #ffffff;
-  font-family: 'Consolas', sans-serif;
   font-size: 16px;
   cursor: pointer;
   border-radius: 0;
@@ -83,10 +95,14 @@ export const Input = styled.input`
   background-color: ${light ? '#ffffff' : '#222222'};
   border: none;
   color: ${light ? '#000000' : '#ffffff'};
-  font-family: 'Consolas', sans-serif;
   font-size: 16px;
   margin-top: 5px;
   border-radius: 0;
+  
+  &:active,
+  &:focus {
+    outline: none;
+  }
 `;
 
 export const Mail = styled.a`
@@ -104,6 +120,16 @@ export const NavigationLink = styled(Link)`
   
   &:hover {
     color: ${light ? '#000000' : '#ffffff'};
+  }
+`;
+
+export const NavigationLinkBadge = styled(NavigationLink)`
+  padding: 0 6px;
+  background-color: ${light ? '#111111' : '#ffffff'};
+  color: ${light ? '#ffffff' : '#000000'};
+  
+  &:hover {
+    color: ${light ? '#ffffff' : '#000000'};
   }
 `;
 
@@ -130,26 +156,24 @@ export const Paragraph = styled.div`
   box-sizing: border-box;
 `;
 
-export const Search = styled.div`
-  padding: 10px 15px;
-  background-color: ${light ? '#ffffff' : '#111111'};
-  width: 100%;
-  box-sizing: border-box;
-`;
-
 export const SearchInput = styled(Input)`
   margin-top: 0;
-  background-color: #333333;
-  color: #ffffff;
+  background-color: ${light ? '#ffffff' : '#111111'};
+  color: ${light ? '#000000' : '#ffffff'};
   border-radius: 0;
+  padding: 8px 12px;
   
   &::placeholder {
-    color: #aaaaaa;
+    color: ${light ? '#777777' : '#cccccc'};
+  }
+  
+  &:active,
+  &:focus {
+    outline: none;
   }
 `;
 
 export const Text = styled.div`
-  font-family: 'Consolas', sans-serif;
   font-size: 16px;
 `;
 

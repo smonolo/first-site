@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import Navigation from './navigation/Navigation';
 import Search from './Search';
 
-import { Box, Text, Title } from '../styles';
+import { Box, Container, NavBox, Text, Title } from '../styles';
 
 interface Props {
   readonly title: string;
@@ -17,17 +17,23 @@ export default ({ title, children }: Props) => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <Box>
-        <Text>
+      <Container>
+        <NavBox>
           <Search />
-          <br />
-          <Title>{title}</Title>
-          <br />
-          {children}
-          <br />
+        </NavBox>
+        <br />
+        <Box>
+          <Text>
+            <Title>{title}</Title>
+            <br />
+            {children}
+          </Text>
+        </Box>
+        <br />
+        <NavBox>
           <Navigation />
-        </Text>
-      </Box>
+        </NavBox>
+      </Container>
     </Fragment>
   );
 };

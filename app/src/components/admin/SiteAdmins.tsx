@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component, createRef, Fragment } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import validator from 'validator';
 
@@ -183,51 +183,57 @@ class SiteAdmins extends Component<Props, State> {
 
   render() {
     return (
-      <Paragraph>
-        site admins
-        <br /><br />
-        {this.state.assignError && (<Error>{this.state.assignError}</Error>)}
-        {this.state.assignInfo && (<Info>{this.state.assignInfo}</Info>)}
-        assign site admin
+      <Fragment>
+        <Paragraph>
+          assign site admin
+          <br /><br />
+          {this.state.assignError && (<Error>{this.state.assignError}</Error>)}
+          {this.state.assignInfo && (<Info>{this.state.assignInfo}</Info>)}
+          username or email
+          <br />
+          <Input
+            type='text'
+            name='assignUsername'
+            minLength={3}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.assignUsername = input}
+            required
+          />
+          <br /><br />
+          <Button
+            type='submit'
+            disabled={this.state.assignButton.disabled}
+            onClick={event => this.assignSiteAdmin(event)}
+          >
+            {this.state.assignButton.text}
+          </Button>
+        </Paragraph>
         <br />
-        <Input
-          type='text'
-          name='assignUsername'
-          minLength={3}
-          maxLength={320}
-          ref={(input: HTMLInputElement) => this.assignUsername = input}
-          required
-        />
-        <br /><br />
-        <Button
-          type='submit'
-          disabled={this.state.assignButton.disabled}
-          onClick={event => this.assignSiteAdmin(event)}
-        >
-          {this.state.assignButton.text}
-        </Button>
-        <br /><br />
-        {this.state.revokeError && (<Error>{this.state.revokeError}</Error>)}
-        {this.state.revokeInfo && (<Info>{this.state.revokeInfo}</Info>)}
-        revoke site admin
-        <br />
-        <Input
-          type='text'
-          name='revokeUsername'
-          minLength={3}
-          maxLength={320}
-          ref={(input: HTMLInputElement) => this.revokeUsername = input}
-          required
-        />
-        <br /><br />
-        <ButtonRed
-          type='submit'
-          disabled={this.state.revokeButton.disabled}
-          onClick={event => this.revokeSiteAdmin(event)}
-        >
-          {this.state.revokeButton.text}
-        </ButtonRed>
-      </Paragraph>
+        <Paragraph>
+          revoke site admin
+          <br /><br />
+          {this.state.revokeError && (<Error>{this.state.revokeError}</Error>)}
+          {this.state.revokeInfo && (<Info>{this.state.revokeInfo}</Info>)}
+          username or email
+          <br />
+          <Input
+            type='text'
+            name='revokeUsername'
+            minLength={3}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.revokeUsername = input}
+            required
+          />
+          <br /><br />
+          <ButtonRed
+            type='submit'
+            disabled={this.state.revokeButton.disabled}
+            onClick={event => this.revokeSiteAdmin(event)}
+          >
+            {this.state.revokeButton.text}
+          </ButtonRed>
+        </Paragraph>
+      </Fragment>
     );
   };
 }

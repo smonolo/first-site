@@ -3,7 +3,7 @@ import validator from 'validator';
 
 import { allowedUsernameChars } from '../constants';
 
-import { SearchInput, Search as SearchDiv } from '../styles';
+import { SearchInput } from '../styles';
 
 class Search extends Component {
   private search: any = createRef();
@@ -30,19 +30,17 @@ class Search extends Component {
 
   render() {
     return (
-      <SearchDiv>
-        <form onSubmit={event => this.searchProfile(event)}>
-          <SearchInput
-            type='text'
-            name='search'
-            minLength={3}
-            maxLength={15}
-            placeholder='search user...'
-            ref={(input: HTMLInputElement) => this.search = input}
-            required
-          />
-        </form>
-      </SearchDiv>
+      <form onSubmit={event => this.searchProfile(event)}>
+        <SearchInput
+          type='text'
+          name='search'
+          minLength={3}
+          maxLength={15}
+          placeholder='search user...'
+          ref={(input: HTMLInputElement) => this.search = input}
+          required
+        />
+      </form>
     );
   };
 }

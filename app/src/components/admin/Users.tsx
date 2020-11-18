@@ -199,64 +199,70 @@ class Users extends Component<Props, State> {
 
   render() {
     return (
-      <Paragraph>
-        users
-        <br /><br />
-        {this.props.loading && 'loading users...'}
-        {!this.props.loading && (
-          <Fragment>
-            count: {this.props.users.length}
-            <br />
-            list: {this.props.users.join(', ')}
-          </Fragment>
-        )}
-        <br /><br />
-        login as user
-        <br /><br />
-        {this.state.loginError && <Error>{this.state.loginError}</Error>}
-        {this.state.loginInfo && <Info>{this.state.loginInfo}</Info>}
-        username or email
+      <Fragment>
+        <Paragraph>
+          {this.props.loading && 'loading users...'}
+          {!this.props.loading && (
+            <Fragment>
+              users
+              <br /><br />
+              count: {this.props.users.length}
+              <br />
+              list: {this.props.users.join(', ')}
+            </Fragment>
+          )}
+        </Paragraph>
         <br />
-        <Input
-          type='text'
-          name='loginUsername'
-          minLength={3}
-          maxLength={320}
-          ref={(input: HTMLInputElement) => this.loginUsername = input}
-          required
-        />
-        <br /><br />
-        <Button
-          type='submit'
-          disabled={this.state.loginButton.disabled}
-          onClick={event => this.loginAsUser(event)}
-        >
-          {this.state.loginButton.text}
-        </Button>
-        <br /><br />
-        delete user
-        <br /><br />
-        {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
-        {this.state.deleteInfo && <Info>{this.state.deleteInfo}</Info>}
-        username or email
+        <Paragraph>
+          login as user
+          <br /><br />
+          {this.state.loginError && <Error>{this.state.loginError}</Error>}
+          {this.state.loginInfo && <Info>{this.state.loginInfo}</Info>}
+          username or email
+          <br />
+          <Input
+            type='text'
+            name='loginUsername'
+            minLength={3}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.loginUsername = input}
+            required
+          />
+          <br /><br />
+          <Button
+            type='submit'
+            disabled={this.state.loginButton.disabled}
+            onClick={event => this.loginAsUser(event)}
+          >
+            {this.state.loginButton.text}
+          </Button>
+        </Paragraph>
         <br />
-        <Input
-          type='text'
-          name='deleteUsername'
-          minLength={3}
-          maxLength={320}
-          ref={(input: HTMLInputElement) => this.deleteUsername = input}
-          required
-        />
-        <br /><br />
-        <ButtonRed
-          type='submit'
-          disabled={this.state.deleteButton.disabled}
-          onClick={event => this.deleteUser(event)}
-        >
-          {this.state.deleteButton.text}
-        </ButtonRed>
-      </Paragraph>
+        <Paragraph>
+          delete user
+          <br /><br />
+          {this.state.deleteError && <Error>{this.state.deleteError}</Error>}
+          {this.state.deleteInfo && <Info>{this.state.deleteInfo}</Info>}
+          username or email
+          <br />
+          <Input
+            type='text'
+            name='deleteUsername'
+            minLength={3}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.deleteUsername = input}
+            required
+          />
+          <br /><br />
+          <ButtonRed
+            type='submit'
+            disabled={this.state.deleteButton.disabled}
+            onClick={event => this.deleteUser(event)}
+          >
+            {this.state.deleteButton.text}
+          </ButtonRed>
+        </Paragraph>
+      </Fragment>
     );
   };
 }

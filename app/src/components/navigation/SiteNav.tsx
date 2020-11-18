@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 
 import { navigation, NavigationItem } from '../../constants';
 
-import { NavigationLink, NavigationLinkRight, NavigationLinkRightLogout } from '../../styles';
+import { NavigationLink, NavigationLinkBadge, NavigationLinkRight, NavigationLinkRightLogout } from '../../styles';
 
 interface Props {
   readonly logged: boolean;
@@ -45,12 +45,12 @@ class SiteNav extends Component<Props> {
             {item.text}
           </NavigationLink>
         ))}
-        <NavigationLink
+        <NavigationLinkBadge
           to=''
           onClick={event => this.toggleTheme(event)}
         >
           {this.light ? 'dark' : 'light'}
-        </NavigationLink>
+        </NavigationLinkBadge>
         {this.props.logged && (
           <NavigationLinkRightLogout
             to=''
