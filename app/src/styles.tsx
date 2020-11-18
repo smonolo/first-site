@@ -17,6 +17,18 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     background-color: ${light ? '#ffffff' : '#000000'};
   }
+  
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: ${light ? '#999999' : '#333333'};
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: ${mainColor};
+  }
 `;
 
 export const AdminBadge = styled.span`
@@ -204,9 +216,14 @@ export const UserNavigationLink = styled(Link)`
   }
 `;
 
-export const UserNavigationName = styled.span`
+export const UserNavigationName = styled(Link)`
   color: #ffffff;
   float: right;
   background-color: ${mainColor};
   padding: 0 6px;
+  text-decoration: none;
+  
+  &:hover {
+    color: #ffffff;
+  }
 `;

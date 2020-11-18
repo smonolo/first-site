@@ -69,6 +69,7 @@ class Admin extends Component<Props, State> {
           users={this.props.users}
           login={this.props.login}
           logout={this.props.logout}
+          fetchUsers={this.props.fetchUsers}
         />
         <br />
         <SiteAdmins />

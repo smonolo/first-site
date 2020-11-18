@@ -18,7 +18,7 @@ export default ({ username, siteAdmin }: Props) => (
       <UserNavigationLink to='/account'>
         account
       </UserNavigationLink>
-      <UserNavigationName>
+      <UserNavigationName to={`/profile/${username}`}>
         {username}
       </UserNavigationName>
     </UserNavigation>

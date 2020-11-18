@@ -169,8 +169,7 @@ class Register extends Component<Props, State> {
         ...data.payload
       });
     } else {
-      // @ts-ignore
-      this.setFormData(data.error);
+      this.setFormData(data.error || 'could not register');
     }
   };
 

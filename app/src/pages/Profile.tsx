@@ -27,6 +27,7 @@ type State = {
 
 interface ProfileResponse {
   readonly success: boolean;
+  readonly error?: string;
   readonly payload?: {
     readonly username: string;
     readonly email: string;
@@ -67,7 +68,7 @@ class Profile extends Component<Props, State> {
 
         const data: ProfileResponse = request.data;
 
-        if (data.success && data.payload) {
+        if (data.success && data.payload && !data.error) {
           this.setState({
             loading: false,
             error: '',
@@ -76,7 +77,7 @@ class Profile extends Component<Props, State> {
         } else {
           this.setState({
             loading: false,
-            error: 'could not parse profile'
+            error: data.error || 'could not parse profile'
           });
         }
       };

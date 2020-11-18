@@ -13,6 +13,7 @@ interface Props {
   readonly users: Array<string>;
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
+  readonly fetchUsers: Function;
 }
 
 type State = {
@@ -209,6 +210,10 @@ class Users extends Component<Props, State> {
               count: {this.props.users.length}
               <br />
               list: {this.props.users.join(', ')}
+              <br /> <br />
+              <Button onClick={() => this.props.fetchUsers()}>
+                refresh
+              </Button>
             </Fragment>
           )}
         </Paragraph>
