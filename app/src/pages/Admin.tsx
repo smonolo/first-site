@@ -3,15 +3,19 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { titles } from '../constants';
+import { version, name } from '../../package.json';
 
 import { AuthState, isLogged, isSiteAdmin, login, logout } from '../redux/auth';
 import { fetchUsers, getUsers } from '../redux/admin';
+import { getGitCommit } from '../redux/app';
 
 import SiteAdmins from '../components/admin/SiteAdmins';
 import Users from '../components/admin/Users';
 
 import Base from '../components/Base';
 import Loading from '../components/Loading';
+
+import { Paragraph } from '../styles';
 
 interface Props {
   readonly logged: boolean;
@@ -20,6 +24,14 @@ interface Props {
   readonly users: Array<string>;
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
+  readonly gitCommit: {
+    readonly shortHash: string;
+    readonly committer: {
+      readonly name: string;
+      readonly email: string;
+    };
+    readonly branch: string;
+  };
 }
 
 type State = {
@@ -64,6 +76,22 @@ class Admin extends Component<Props, State> {
 
     return (
       <Base title={this.title}>
+        <Paragraph>
+          app info
+          <br /><br />
+          name: {name}
+          <br />
+          version: {version}
+          <br /><br />
+          git info
+          <br /><br />
+          hash: {this.props.gitCommit.shortHash}
+          <br />
+          committer: {this.props.gitCommit.committer.name} {`<${this.props.gitCommit.committer.email}>`}
+          <br />
+          branch: {this.props.gitCommit.branch}
+        </Paragraph>
+        <br />
         <Users
           loading={this.state.loading}
           users={this.props.users}
@@ -82,7 +110,8 @@ const mapStateToProps = createSelector(
   isLogged,
   isSiteAdmin,
   getUsers,
-  (logged, siteAdmin, users) => ({ logged, siteAdmin, users })
+  getGitCommit,
+  (logged, siteAdmin, users, gitCommit) => ({ logged, siteAdmin, users, gitCommit })
 );
 
 const mapDispatchToProps = {

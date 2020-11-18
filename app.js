@@ -40,6 +40,7 @@ app.use('/api/admin/users', require('./routes/api/admin/users'));
 app.use('/api/admin/site-admins', require('./routes/api/admin/site_admins'));
 
 app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/app', require('./routes/api/app'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app', 'build', 'index.html'));

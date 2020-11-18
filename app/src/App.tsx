@@ -7,6 +7,7 @@ import axios, { AxiosResponse } from 'axios';
 import { pages, Page } from './constants';
 
 import { isLogged, login, logout, LoginResponse, AuthState } from './redux/auth';
+import { parseGitCommit } from './redux/app';
 
 import { GlobalStyle } from './styles';
 
@@ -14,10 +15,13 @@ interface Props {
   readonly logged: boolean;
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
+  readonly parseGitCommit: Function;
 }
 
 class App extends Component<Props> {
   componentDidMount() {
+    this.props.parseGitCommit();
+
     setInterval(async () => {
       if (this.props.logged && localStorage.getItem('jwt')) {
         const request: AxiosResponse = await axios.post('/api/auth/verify', {
@@ -68,7 +72,8 @@ const mapStateToProps = createSelector(
 
 const mapDispatchToProps = {
   login,
-  logout
+  logout,
+  parseGitCommit
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

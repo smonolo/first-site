@@ -11,21 +11,24 @@ import thunk from 'redux-thunk';
 
 import { authReducer, authInitialState, AuthState } from './auth';
 import { adminReducer, adminInitialState, AdminState } from './admin';
+import { appReducer, appInitialState, AppState } from './app';
 
-// interface is readonly
 export interface StoreState {
   readonly auth: AuthState;
   readonly admin: AdminState;
+  readonly app: AppState;
 }
 
 const reducers: Reducer<CombinedState<StoreState>> = combineReducers({
   auth: authReducer,
-  admin: adminReducer
+  admin: adminReducer,
+  app: appReducer
 });
 
 const initialStoreState: StoreState = {
   auth: authInitialState,
-  admin: adminInitialState
+  admin: adminInitialState,
+  app: appInitialState
 };
 
 const middleware: StoreEnhancer = applyMiddleware(thunk);
