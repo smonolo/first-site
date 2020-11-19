@@ -4,44 +4,30 @@ const validator = require('validator');
 const User = require('mongoose').model('user');
 
 const { allowedUsernameChars } = require('../../app');
+const { error, internalError, invalidRequest } = require('./helpers');
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'profile') {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (!req.body.type || !req.body.payload) {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (req.body.type === 'getProfile') {
     if (!req.body.payload.username) {
-      return res.json({
-        success: false,
-        error: 'username is missing'
-      });
+      return error(res, 'username is missing');
     }
 
     const username = validator.unescape(validator.trim(req.body.payload.username));
 
     if (username.length < 3 || username.length > 15) {
-      return res.json({
-        success: false,
-        error: 'username length is invalid'
-      });
+      return error(res, 'username length is invalid');
     }
 
     if (!username.match(allowedUsernameChars)) {
-      return res.json({
-        success: false,
-        error: 'username contains invalid characters'
-      });
+      return error(res, 'username contains invalid characters');
     }
 
     let user;
@@ -50,18 +36,12 @@ router.post('/', async (req, res) => {
       user = await User.findOne({
         username: username
       }).select('_id username email siteAdmin');
-    } catch (error) {
-      return res.json({
-        success: false,
-        error: 'internal error'
-      });
+    } catch (err) {
+      return internalError(res);
     }
 
     if (!user) {
-      return res.json({
-        success: false,
-        error: 'could not find user'
-      });
+      return error(res, 'could not find user');
     }
 
     return res.json({
@@ -73,10 +53,7 @@ router.post('/', async (req, res) => {
       }
     });
   } else {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 });
 

@@ -1,29 +1,22 @@
 const router = require('express').Router();
 const gitLastCommit = require('git-last-commit');
 
+const { error, internalError, invalidRequest } = require('./helpers');
+
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'app') {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (!req.body.type) {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (req.body.type === 'getGitCommit') {
     try {
-      gitLastCommit.getLastCommit((error, commit) => {
-        if (error) {
-          return res.json({
-            success: false,
-            error: 'could not parse commit info'
-          });
+      gitLastCommit.getLastCommit((err, commit) => {
+        if (err) {
+          return error(res, 'could not parse commit info');
         }
 
         if (commit) {
@@ -41,23 +34,14 @@ router.post('/', async (req, res) => {
             }
           });
         } else {
-          return res.json({
-            success: false,
-            error: 'could not parse commit info'
-          });
+          return error(res, 'could not parse commit info');
         }
       })
     } catch (error) {
-      return res.json({
-        success: false,
-        error: 'internal error'
-      });
+      return internalError(res);
     }
   } else {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 });
 

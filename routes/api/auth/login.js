@@ -6,28 +6,20 @@ const validator = require('validator');
 const User = require('mongoose').model('user');
 
 const { allowedEmailChars, allowedPasswordChars } = require('../../../app');
+const { error, internalError, invalidRequest } = require('../helpers');
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authLogin') {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (!req.body.type || !req.body.payload) {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (req.body.type === 'login') {
     if (!req.body.payload.username || !req.body.payload.password) {
-      return res.json({
-        success: false,
-        error: 'username or password is missing'
-      });
+      return error(res, 'username or password is missing');
     }
 
     const username = validator.unescape(validator.trim(req.body.payload.username));
@@ -39,20 +31,14 @@ router.post('/', async (req, res) => {
       password.length < 8 ||
       password.length > 1024
     ) {
-      return res.json({
-        success: false,
-        error: 'username or password length is invalid'
-      });
+      return error(res, 'username or password length is invalid');
     }
 
     if (
       !username.match(allowedEmailChars) ||
       !password.match(allowedPasswordChars)
     ) {
-      return res.json({
-        success: false,
-        error: 'username or password includes invalid characters'
-      });
+      return error(res, 'username or password includes invalid characters');
     }
 
     let user;
@@ -65,24 +51,15 @@ router.post('/', async (req, res) => {
         ]
       }).select('_id username email password siteAdmin');
     } catch (error) {
-      return res.json({
-        success: false,
-        error: 'internal error'
-      });
+      return internalError(res);
     }
 
     if (!user) {
-      return res.json({
-        success: false,
-        error: 'could not find user'
-      });
+      return error(res, 'could not find user');
     }
 
     if (!bcrypt.compareSync(password, user.password)) {
-      return res.json({
-        success: false,
-        error: 'password is invalid'
-      });
+      return error(res, 'password is invalid');
     }
 
     const jwtContent = {
@@ -102,10 +79,7 @@ router.post('/', async (req, res) => {
       }
     });
   } else {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 });
 

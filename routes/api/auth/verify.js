@@ -3,28 +3,21 @@ const jwt = require('jsonwebtoken');
 
 const User = require('mongoose').model('user');
 
+const { error, internalError, invalidRequest } = require('../helpers');
+
 router.post('/', (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authVerify') {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (!req.body.type || !req.body.payload || !req.body.payload.jwt) {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   try {
-    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
-      if (error) {
-        return res.json({
-          success: false,
-          error: 'internal error'
-        });
+    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (err, result) => {
+      if (err) {
+        return internalError(res);
       }
 
       if (result) {
@@ -45,24 +38,15 @@ router.post('/', (req, res) => {
           try {
             user = await User.findOne({ _id: result.id }).select('_id username email siteAdmin');
           } catch (error) {
-            return res.json({
-              success: false,
-              error: 'internal error'
-            });
+            return internalError(res);
           }
 
           if (!user) {
-            return res.json({
-              success: false,
-              error: 'could not find user'
-            });
+            return error(res, 'could not find user');
           }
 
           if (result.id !== user._id) {
-            return res.json({
-              success: false,
-              error: 'invalid user'
-            });
+            return error(res, 'invalid user');
           }
 
           const jwtContent = {
@@ -82,23 +66,14 @@ router.post('/', (req, res) => {
             }
           });
         } else {
-          return res.json({
-            success: false,
-            error: 'invalid request'
-          });
+          return invalidRequest(res);
         }
       } else {
-        return res.json({
-          success: false,
-          error: 'invalid request'
-        });
+        return invalidRequest(res);
       }
     });
   } catch (error) {
-    return res.json({
-      success: false,
-      error: 'internal error'
-    });
+    return internalError(res);
   }
 });
 

@@ -5,36 +5,25 @@ const validator = require('validator');
 const User = require('mongoose').model('user');
 
 const { allowedEmailChars } = require('../../../app');
+const { error, internalError, invalidRequest } = require('../helpers');
 
 router.post('/', async (req, res) => {
   if (!req.body.auth || req.body.auth !== 'adminUsers') {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (!req.body.payload || !req.body.payload.jwt) {
-    res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   try {
-    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
-      if (error || !result.siteAdmin) {
-        return res.json({
-          success: false,
-          error: 'not authorized'
-        });
+    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (err, result) => {
+      if (err || !result.siteAdmin) {
+        return error(res, 'not authorized');
       }
 
       if (!req.body.type) {
-        return res.json({
-          success: false,
-          error: 'invalid request'
-        });
+        return invalidRequest(res);
       }
 
       if (req.body.type === 'getEmailsList') {
@@ -42,18 +31,12 @@ router.post('/', async (req, res) => {
 
         try {
           emailsList = await User.find({}).select('email').lean();
-        } catch (error) {
-          return res.json({
-            success: false,
-            error: 'internal error'
-          });
+        } catch (err) {
+          return internalError(res);
         }
 
         if (!emailsList) {
-          return res.json({
-            success: false,
-            error: 'could not parse users'
-          });
+          return error(res, 'could not parse users');
         }
 
         return res.json({
@@ -64,26 +47,17 @@ router.post('/', async (req, res) => {
         });
       } else if (req.body.type === 'deleteUser') {
         if (!req.body.payload.username) {
-          return res.json({
-            success: false,
-            error: 'username is missing'
-          });
+          return error(res, 'username is missing');
         }
 
         const username = validator.unescape(validator.trim(req.body.payload.username));
 
         if (username.length < 3 || username.length > 320) {
-          return res.json({
-            success: false,
-            error: 'username length is invalid'
-          });
+          return error(res, 'username length is invalid');
         }
 
         if (!username.match(allowedEmailChars)) {
-          return res.json({
-            success: false,
-            error: 'username contains invalid characters'
-          });
+          return error(res, 'username contains invalid characters');
         }
 
         let user;
@@ -95,43 +69,28 @@ router.post('/', async (req, res) => {
               { email: username.toLowerCase() }
             ]
           }).select('_id');
-        } catch (error) {
-          return res.json({
-            success: false,
-            error: 'internal error'
-          });
+        } catch (err) {
+          return internalError(res);
         }
 
         if (!user) {
-          return res.json({
-            success: false,
-            error: 'could not find user'
-          });
+          return error(res, 'could not find user');
         }
 
         return res.json({ success: true });
       } else if (req.body.type === 'loginAsUser') {
         if (!req.body.payload.username) {
-          return res.json({
-            success: false,
-            error: 'username is missing'
-          });
+          return error(res, 'username is missing');
         }
 
         const username = validator.unescape(validator.trim(req.body.payload.username));
 
         if (username.length < 3 || username.length > 320) {
-          return res.json({
-            success: false,
-            error: 'username length is invalid'
-          });
+          return error(res, 'username length is invalid');
         }
 
         if (!username.match(allowedEmailChars)) {
-          return res.json({
-            success: false,
-            error: 'username contains invalid characters'
-          });
+          return error(res, 'username contains invalid characters');
         }
 
         let user;
@@ -144,17 +103,11 @@ router.post('/', async (req, res) => {
             ]
           }).select('_id username email siteAdmin');
         } catch (error) {
-          return res.json({
-            success: false,
-            error: 'internal error'
-          });
+          return internalError(res);
         }
 
         if (!user) {
-          return res.json({
-            success: false,
-            error: 'could not find user'
-          });
+          return error(res, 'could not find user');
         }
 
         const jwtContent = {
@@ -174,17 +127,11 @@ router.post('/', async (req, res) => {
           }
         });
       } else {
-        return res.json({
-          success: false,
-          error: 'invalid request'
-        });
+        return invalidRequest(res);
       }
     });
   } catch (error) {
-    res.json({
-      success: false,
-      error: 'internal error'
-    });
+    return internalError(res);
   }
 });
 

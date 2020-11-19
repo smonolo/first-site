@@ -5,74 +5,48 @@ const validator = require('validator');
 const User = require('mongoose').model('user');
 
 const { allowedUsernameChars, allowedEmailChars } = require('../../../app');
+const { error, internalError, invalidRequest } = require('../helpers');
 
 router.post('/', (req, res) => {
   if (!req.body.auth || req.body.auth !== 'authAccount') {
-    return res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   if (!req.body.payload || !req.body.payload.jwt) {
-    res.json({
-      success: false,
-      error: 'invalid request'
-    });
+    return invalidRequest(res);
   }
 
   try {
-    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (error, result) => {
-      if (error) {
-        return res.json({
-          success: false,
-          error: 'internal error'
-        });
+    jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (err, result) => {
+      if (err) {
+        return internalError(res);
       }
 
       if (!req.body.type) {
-        return res.json({
-          success: false,
-          error: 'invalid request'
-        });
+        return invalidRequest(res);
       }
 
       if (req.body.type === 'deleteAccount') {
         if (!req.body.payload.username) {
-          return res.json({
-            success: false,
-            error: 'username is missing'
-          });
+          return error(res, 'username is missing');
         }
 
         const username = validator.unescape(validator.trim(req.body.payload.username));
 
         if (username.length < 3 || username.length > 15) {
-          return res.json({
-            success: false,
-            error: 'username length is invalid'
-          });
+          return error(res, 'username length is invalid');
         }
 
         if (!username.match(allowedUsernameChars)) {
-          return res.json({
-            success: false,
-            error: 'username contains invalid characters'
-          });
+          return error(res, 'username contains invalid characters');
         }
 
         if (result.username !== username) {
-          return res.json({
-            success: false,
-            error: 'username is invalid'
-          });
+          return error(res, 'username is invalid');
         }
 
         if (result.siteAdmin) {
-          return res.json({
-            success: false,
-            error: 'cannot delete account as site admin'
-          });
+          return error(res, 'cannot delete account as site admin');
         }
 
         let user;
@@ -80,49 +54,31 @@ router.post('/', (req, res) => {
         try {
           user = await User.findOneAndDelete({ username }).select('_id');
         } catch (error) {
-          return res.json({
-            success: false,
-            error: 'internal error'
-          });
+          return internalError(res);
         }
 
         if (!user) {
-          return res.json({
-            success: false,
-            error: 'could not find user'
-          });
+          return error(res, 'could not find user');
         }
 
         return res.json({ success: true });
       } else if (req.body.type === 'updateUsername') {
         if (!req.body.payload.username) {
-          return res.json({
-            success: false,
-            error: 'username is missing'
-          });
+          return error(res, 'username is missing');
         }
 
         const username = validator.unescape(validator.trim(req.body.payload.username));
 
         if (username.length < 3 || username.length > 15) {
-          return res.json({
-            success: false,
-            error: 'username length is invalid'
-          });
+          return error(res, 'username length is invalid');
         }
 
         if (!username.match(allowedUsernameChars)) {
-          return res.json({
-            success: false,
-            error: 'username contains invalid characters'
-          });
+          return error(res, 'username contains invalid characters');
         }
 
         if (result.username === username) {
-          return res.json({
-            success: false,
-            error: 'username is invalid'
-          });
+          return error(res, 'username is invalid');
         }
 
         let user;
@@ -138,56 +94,35 @@ router.post('/', (req, res) => {
             useFindAndModify: false
           }).select('_id');
         } catch (error) {
-          return res.json({
-            success: false,
-            error: 'internal error'
-          });
+          return internalError(res);
         }
 
         if (!user) {
-          return res.json({
-            success: false,
-            error: 'could not find user'
-          });
+          return error(res, 'could not find user');
         }
 
         return res.json({ success: true });
       }  else if (req.body.type === 'updateEmail') {
         if (!req.body.payload.email) {
-          return res.json({
-            success: false,
-            error: 'email is missing'
-          });
+          return error(res, 'email is missing');
         }
 
         const email = validator.unescape(validator.trim(req.body.payload.email));
 
         if (email.length < 5 || email.length > 320) {
-          return res.json({
-            success: false,
-            error: 'email length is invalid'
-          });
+          return error(res, 'email length is invalid');
         }
 
         if (!email.match(allowedEmailChars)) {
-          return res.json({
-            success: false,
-            error: 'email contains invalid characters'
-          });
+          return error(res, 'email contains invalid characters');
         }
 
         if (!validator.isEmail(email)) {
-          return res.json({
-            success: false,
-            error: 'email is invalid'
-          });
+          return error(res, 'email is invalid');
         }
 
         if (result.email === email) {
-          return res.json({
-            success: false,
-            error: 'email is invalid'
-          });
+          return error(res, 'email is invalid');
         }
 
         let user;
@@ -203,32 +138,20 @@ router.post('/', (req, res) => {
             useFindAndModify: false
           }).select('_id');
         } catch (error) {
-          return res.json({
-            success: false,
-            error: 'internal error'
-          });
+          return internalError(res);
         }
 
         if (!user) {
-          return res.json({
-            success: false,
-            error: 'could not find user'
-          });
+          return error(res, 'could not find user');
         }
 
         return res.json({ success: true });
       } else {
-        return res.json({
-          success: false,
-          error: 'invalid request'
-        });
+        return invalidRequest(res);
       }
     });
   } catch (error) {
-    res.json({
-      success: false,
-      error: 'internal error'
-    });
+    return internalError(res);
   }
 });
 
