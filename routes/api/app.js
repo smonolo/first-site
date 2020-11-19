@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const gitLastCommit = require('git-last-commit');
+const dateformat = require('dateformat');
 
 const { error, internalError, invalidRequest } = require('./helpers');
 
@@ -25,6 +26,9 @@ router.post('/', async (req, res) => {
             payload: {
               gitCommit: {
                 shortHash: commit.shortHash,
+                hash: commit.hash,
+                subject: commit.subject,
+                committedOn: dateformat(new Date(parseInt(commit.committedOn))),
                 committer: {
                   name: commit.committer.name,
                   email: commit.committer.email

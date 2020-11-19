@@ -1,20 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 
 import types from './action-types';
-import { AppDispatch } from './types';
+import { AppDispatch, GitCommit } from './types';
 
 interface GitCommitResponse {
   readonly success: boolean;
   readonly error?: string;
   readonly payload?: {
-    readonly gitCommit: {
-      readonly shortHash: string;
-      readonly committer: {
-        readonly name: string;
-        readonly email: string;
-      };
-      readonly branch: string;
-    };
+    readonly gitCommit: GitCommit
   };
 }
 

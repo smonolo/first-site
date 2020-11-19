@@ -7,7 +7,7 @@ import { version, name } from '../../package.json';
 
 import { AuthState, isLogged, isSiteAdmin, login, logout } from '../redux/auth';
 import { fetchUsers, getUsers } from '../redux/admin';
-import { getGitCommit } from '../redux/app';
+import { getGitCommit, GitCommit } from '../redux/app';
 
 import SiteAdmins from '../components/admin/SiteAdmins';
 import Users from '../components/admin/Users';
@@ -24,14 +24,7 @@ interface Props {
   readonly users: Array<string>;
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
-  readonly gitCommit: {
-    readonly shortHash: string;
-    readonly committer: {
-      readonly name: string;
-      readonly email: string;
-    };
-    readonly branch: string;
-  };
+  readonly gitCommit: GitCommit;
 }
 
 type State = {
@@ -85,11 +78,17 @@ class Admin extends Component<Props, State> {
           <br /><br />
           git info
           <br /><br />
-          hash: {this.props.gitCommit.shortHash}
+          <span title={this.props.gitCommit.hash}>
+            hash: {this.props.gitCommit.shortHash}
+          </span>
           <br />
-          committer: {this.props.gitCommit.committer.name} {`<${this.props.gitCommit.committer.email}>`}
+          dev: {this.props.gitCommit.committer.name} {`<${this.props.gitCommit.committer.email}>`}
+          <br />
+          time: {this.props.gitCommit.committedOn}
           <br />
           branch: {this.props.gitCommit.branch}
+          <br />
+          subject: {this.props.gitCommit.subject}
         </Paragraph>
         <br />
         <Users

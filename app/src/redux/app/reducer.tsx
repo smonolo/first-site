@@ -6,6 +6,9 @@ import types from './action-types';
 export const appInitialState: AppState = {
   gitCommit: {
     shortHash: '',
+    hash: '',
+    subject: '',
+    committedOn: '',
     committer: {
       name: '',
       email: ''
