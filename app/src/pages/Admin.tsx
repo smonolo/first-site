@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { titles } from '../constants';
-import { version, name } from '../../package.json';
 
 import { AuthState, isLogged, isSiteAdmin, login, logout } from '../redux/auth';
 import { fetchUsers, getUsers } from '../redux/admin';
@@ -11,11 +10,10 @@ import { getGitCommit, GitCommit } from '../redux/app';
 
 import SiteAdmins from '../components/admin/SiteAdmins';
 import Users from '../components/admin/Users';
+import Info from '../components/admin/Info';
 
 import Base from '../components/Base';
 import Loading from '../components/Loading';
-
-import { Paragraph } from '../styles';
 
 interface Props {
   readonly logged: boolean;
@@ -69,27 +67,7 @@ class Admin extends Component<Props, State> {
 
     return (
       <Base title={this.title}>
-        <Paragraph>
-          app info
-          <br /><br />
-          name: {name}
-          <br />
-          version: {version}
-          <br /><br />
-          git info
-          <br /><br />
-          <span title={this.props.gitCommit.hash}>
-            hash: {this.props.gitCommit.shortHash}
-          </span>
-          <br />
-          dev: {this.props.gitCommit.committer.name} {`<${this.props.gitCommit.committer.email}>`}
-          <br />
-          time: {this.props.gitCommit.committedOn}
-          <br />
-          branch: {this.props.gitCommit.branch}
-          <br />
-          subject: {this.props.gitCommit.subject}
-        </Paragraph>
+        <Info gitCommit={this.props.gitCommit} />
         <br />
         <Users
           loading={this.state.loading}
