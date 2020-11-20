@@ -1,5 +1,10 @@
+export interface AdminUser {
+  readonly email: string;
+  readonly siteAdmin: boolean;
+}
+
 export type AdminState = {
-  users: Array<string>
+  users: Array<AdminUser>
 };
 
 export type AdminAction = {

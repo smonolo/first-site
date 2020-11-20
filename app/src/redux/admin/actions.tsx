@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 
 import types from './action-types';
-import { AdminDispatch } from './types';
+import { AdminDispatch, AdminUser } from './types';
 
 interface RequestData {
   readonly success: boolean;
   readonly payload?: {
-    readonly users: Array<string>;
+    readonly users: Array<AdminUser>;
   };
 }
 
@@ -30,7 +30,7 @@ export const fetchUsers = () => async (dispatch: AdminDispatch) => {
     dispatch({
       type: types.FETCH_USERS,
       payload: {
-        users: ['could not fetch users']
+        users: [{ email: 'could not fetch users', siteAdmin: false }]
       }
     });
   }

@@ -27,22 +27,22 @@ router.post('/', async (req, res) => {
       }
 
       if (req.body.type === 'getEmailsList') {
-        let emailsList;
+        let users;
 
         try {
-          emailsList = await User.find({}).select('email').lean();
+          users = await User.find({}).select('email siteAdmin').lean();
         } catch (err) {
           return internalError(res);
         }
 
-        if (!emailsList) {
+        if (!users) {
           return error(res, 'could not parse users');
         }
 
         return res.json({
           success: true,
           payload: {
-            users: emailsList.map(user => user.email)
+            users
           }
         });
       } else if (req.body.type === 'deleteUser') {

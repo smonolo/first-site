@@ -5,12 +5,13 @@ import validator from 'validator';
 import { allowedEmailChars } from '../../constants';
 
 import { LoginResponse, AuthState } from '../../redux/auth';
+import { AdminUser } from '../../redux/admin';
 
-import { Paragraph, Input, Error, Info, ButtonRed, Button } from '../../styles';
+import { Paragraph, Input, Error, Info, ButtonRed, Button, AdminBadge } from '../../styles';
 
 interface Props {
   readonly loading: boolean;
-  readonly users: Array<string>;
+  readonly users: Array<AdminUser>;
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
   readonly fetchUsers: Function;
@@ -209,8 +210,17 @@ class Users extends Component<Props, State> {
               <br /><br />
               count: {this.props.users.length}
               <br />
-              list: {this.props.users.join(', ')}
-              <br /> <br />
+              list:
+              <ul>
+                {this.props.users.map(user => (
+                  <li>
+                    {user.email}
+                    {user.siteAdmin && (
+                      <AdminBadge>admin</AdminBadge>
+                    )}
+                  </li>
+                ))}
+              </ul>
               <Button onClick={() => this.props.fetchUsers()}>
                 refresh
               </Button>

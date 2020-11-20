@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import { titles } from '../constants';
 
 import { AuthState, isLogged, isSiteAdmin, login, logout } from '../redux/auth';
-import { fetchUsers, getUsers } from '../redux/admin';
+import { AdminUser, fetchUsers, getUsers } from '../redux/admin';
 import { getGitCommit, GitCommit } from '../redux/app';
 
 import SiteAdmins from '../components/admin/SiteAdmins';
@@ -19,7 +19,7 @@ interface Props {
   readonly logged: boolean;
   readonly siteAdmin: boolean;
   readonly fetchUsers: Function;
-  readonly users: Array<string>;
+  readonly users: Array<AdminUser>;
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
   readonly gitCommit: GitCommit;
