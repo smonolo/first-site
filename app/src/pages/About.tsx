@@ -16,17 +16,17 @@ export default () => {
         <br /><br />
         i work at&nbsp;
         <Anchor
+          href='https://top.gg'
+          target='_blank'
+        >
+          top.gg
+        </Anchor>
+        . previously at&nbsp;
+        <Anchor
           href='https://www.eslgaming.com'
           target='_blank'
         >
           esl
-        </Anchor>
-        &nbsp;for&nbsp;
-        <Anchor
-          href='https://www.badlion.net'
-          target='_blank'
-        >
-          badlion
         </Anchor>
         <br /><br />
         why does this site have accounts? idk was testing
