@@ -51,6 +51,7 @@ class Navigation extends Component<Props> {
           <UserNav
             username={this.props.auth.username}
             siteAdmin={this.props.auth.siteAdmin}
+            banned={this.props.auth.banned}
           />
         )}
         <SiteNav

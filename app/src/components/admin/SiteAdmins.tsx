@@ -6,7 +6,9 @@ import { allowedEmailChars } from '../../constants';
 
 import { Button, ButtonRed, Error, Info, Input, Paragraph } from '../../styles';
 
-interface Props {}
+interface Props {
+  readonly banned: boolean
+}
 
 type State = {
   assignError: string,
@@ -86,6 +88,10 @@ class SiteAdmins extends Component<Props, State> {
     });
 
     const assignUsernameValue: string = validator.unescape(validator.trim(this.assignUsername.value));
+
+    if (this.props.banned) {
+      return this.setAssignFormData('you are currently banned');
+    }
 
     if (!assignUsernameValue) {
       return this.setAssignFormData('username is missing');

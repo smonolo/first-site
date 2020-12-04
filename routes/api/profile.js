@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
     try {
       user = await User.findOne({
         username: username
-      }).select('_id username email siteAdmin');
+      }).select('_id username email siteAdmin banned');
     } catch (err) {
       return internalError(res);
     }
@@ -49,7 +49,8 @@ router.post('/', async (req, res) => {
       payload: {
         username: user.username,
         email: user.email,
-        siteAdmin: user.siteAdmin
+        siteAdmin: user.siteAdmin,
+        banned: user.banned
       }
     });
   } else {

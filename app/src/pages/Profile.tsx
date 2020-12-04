@@ -21,7 +21,8 @@ type State = {
   profile: {
     username: string,
     email: string,
-    siteAdmin: boolean
+    siteAdmin: boolean,
+    banned: boolean
   }
 };
 
@@ -32,6 +33,7 @@ interface ProfileResponse {
     readonly username: string;
     readonly email: string;
     readonly siteAdmin: boolean;
+    readonly banned: boolean;
   };
 }
 
@@ -45,7 +47,8 @@ class Profile extends Component<Props, State> {
       profile: {
         username: '',
         email: '',
-        siteAdmin: false
+        siteAdmin: false,
+        banned: false
       }
     };
   };
@@ -108,6 +111,11 @@ class Profile extends Component<Props, State> {
               {this.state.profile.siteAdmin && (
                 <AdminBadge>
                   admin
+                </AdminBadge>
+              )}
+              {this.state.profile.banned && (
+                <AdminBadge>
+                  banned
                 </AdminBadge>
               )}
               {(this.props.siteAdmin || this.props.username === this.state.profile.username) && (

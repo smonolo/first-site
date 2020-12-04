@@ -30,7 +30,12 @@ export const fetchUsers = () => async (dispatch: AdminDispatch) => {
     dispatch({
       type: types.FETCH_USERS,
       payload: {
-        users: [{ email: 'could not fetch users', siteAdmin: false }]
+        users: [{
+          username: 'could not fetch users',
+          email: '',
+          siteAdmin: false,
+          banned: false
+        }]
       }
     });
   }

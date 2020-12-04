@@ -29,14 +29,15 @@ router.post('/', (req, res) => {
               id: result.id,
               username: result.username,
               email: result.email,
-              siteAdmin: result.siteAdmin
+              siteAdmin: result.siteAdmin,
+              banned: result.banned
             }
           });
         } else if (req.body.type === 'refresh') {
           let user;
 
           try {
-            user = await User.findOne({ _id: result.id }).select('_id username email siteAdmin');
+            user = await User.findOne({ _id: result.id }).select('_id username email siteAdmin banned');
           } catch (error) {
             return internalError(res);
           }
@@ -53,7 +54,8 @@ router.post('/', (req, res) => {
             id: user._id,
             username: user.username,
             email: user.email,
-            siteAdmin: user.siteAdmin
+            siteAdmin: user.siteAdmin,
+            banned: user.banned
           };
 
           const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);

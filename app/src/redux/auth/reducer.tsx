@@ -9,6 +9,7 @@ export const authInitialState: AuthState = {
   username: '',
   email: '',
   siteAdmin: false,
+  banned: false,
   jwt: ''
 };
 

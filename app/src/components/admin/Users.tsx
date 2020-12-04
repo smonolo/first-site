@@ -15,12 +15,25 @@ interface Props {
   readonly login: (payload: AuthState) => void;
   readonly logout: Function;
   readonly fetchUsers: Function;
+  readonly banned: boolean;
 }
 
 type State = {
   loginError: string,
   loginInfo: string,
   loginButton: {
+    text: string,
+    disabled: boolean
+  },
+  banError: string,
+  banInfo: string,
+  banButton: {
+    text: string,
+    disabled: boolean
+  },
+  unbanError: string,
+  unbanInfo: string,
+  unbanButton: {
     text: string,
     disabled: boolean
   },
@@ -38,8 +51,10 @@ interface DeleteUserResponse {
 }
 
 class Users extends Component<Props, State> {
-  private deleteUsername: any = createRef();
   private loginUsername: any = createRef();
+  private banUsername: any = createRef();
+  private unbanUsername: any = createRef();
+  private deleteUsername: any = createRef();
 
   constructor(props: Props) {
     super(props);
@@ -49,6 +64,18 @@ class Users extends Component<Props, State> {
       loginInfo: '',
       loginButton: {
         text: 'login',
+        disabled: false
+      },
+      banError: '',
+      banInfo: '',
+      banButton: {
+        text: 'ban',
+        disabled: false
+      },
+      unbanError: '',
+      unbanInfo: '',
+      unbanButton: {
+        text: 'unban',
         disabled: false
       },
       deleteError: '',
@@ -66,6 +93,28 @@ class Users extends Component<Props, State> {
       loginInfo,
       loginButton: {
         text: 'login',
+        disabled: false
+      }
+    });
+  };
+
+  setBanFormData(banError: string = '', banInfo: string = '') {
+    this.setState({
+      banError,
+      banInfo,
+      banButton: {
+        text: 'ban',
+        disabled: false
+      }
+    });
+  };
+
+  setUnbanFormData(unbanError: string = '', unbanInfo: string = '') {
+    this.setState({
+      unbanError,
+      unbanInfo,
+      unbanButton: {
+        text: 'unban',
         disabled: false
       }
     });
@@ -95,6 +144,10 @@ class Users extends Component<Props, State> {
     });
 
     const loginUsernameValue: string = validator.unescape(validator.trim(this.loginUsername.value));
+
+    if (this.props.banned) {
+      return this.setLoginFormData('you are currently banned');
+    }
 
     if (!loginUsernameValue) {
       return this.setLoginFormData('username is missing');
@@ -145,6 +198,122 @@ class Users extends Component<Props, State> {
     }
   };
 
+  async banUser(event: any) {
+    event.preventDefault();
+
+    this.setState({
+      banError: '',
+      banInfo: '',
+      banButton: {
+        text: 'loading',
+        disabled: true
+      }
+    });
+
+    const banUsernameValue: string = validator.unescape(validator.trim(this.banUsername.value));
+
+    if (this.props.banned) {
+      return this.setBanFormData('you are currently banned');
+    }
+
+    if (!banUsernameValue) {
+      return this.setBanFormData('username is missing');
+    }
+
+    if (banUsernameValue.length < 3) {
+      return this.setBanFormData('username is too short');
+    }
+
+    if (banUsernameValue.length > 320) {
+      return this.setBanFormData('username is too long');
+    }
+
+    if (!banUsernameValue.match(allowedEmailChars)) {
+      return this.setBanFormData('username contains invalid characters');
+    }
+
+    this.banUsername.value = '';
+
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
+      auth: 'adminUsers',
+      type: 'banUser',
+      payload: {
+        jwt: localStorage.getItem('jwt'),
+        username: banUsernameValue
+      }
+    });
+
+    const data: DeleteUserResponse = request.data;
+
+    if (data.success && !data.error) {
+      this.setBanFormData('', 'user banned');
+
+      setTimeout(() => {
+        this.setState({ banInfo: '' });
+      }, 5000);
+    } else {
+      this.setBanFormData(data.error);
+    }
+  };
+
+  async unbanUser(event: any) {
+    event.preventDefault();
+
+    this.setState({
+      unbanError: '',
+      unbanInfo: '',
+      unbanButton: {
+        text: 'loading',
+        disabled: true
+      }
+    });
+
+    const unbanUsernameValue: string = validator.unescape(validator.trim(this.unbanUsername.value));
+
+    if (this.props.banned) {
+      return this.setUnbanFormData('you are currently banned');
+    }
+
+    if (!unbanUsernameValue) {
+      return this.setUnbanFormData('username is missing');
+    }
+
+    if (unbanUsernameValue.length < 3) {
+      return this.setUnbanFormData('username is too short');
+    }
+
+    if (unbanUsernameValue.length > 320) {
+      return this.setUnbanFormData('username is too long');
+    }
+
+    if (!unbanUsernameValue.match(allowedEmailChars)) {
+      return this.setUnbanFormData('username contains invalid characters');
+    }
+
+    this.unbanUsername.value = '';
+
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
+      auth: 'adminUsers',
+      type: 'unbanUser',
+      payload: {
+        jwt: localStorage.getItem('jwt'),
+        username: unbanUsernameValue
+      }
+    });
+
+    const data: DeleteUserResponse = request.data;
+
+    if (data.success && !data.error) {
+      this.setUnbanFormData('', 'user unbanned');
+
+      setTimeout(() => {
+        this.setState({ unbanInfo: '' });
+      }, 5000);
+    } else {
+      this.setUnbanFormData(data.error);
+    }
+  };
+
   async deleteUser(event: any) {
     event.preventDefault();
 
@@ -158,6 +327,10 @@ class Users extends Component<Props, State> {
     });
 
     const deleteUsernameValue: string = validator.unescape(validator.trim(this.deleteUsername.value));
+
+    if (this.props.banned) {
+      return this.setDeleteFormData('you are currently banned');
+    }
 
     if (!deleteUsernameValue) {
       return this.setDeleteFormData('username is missing');
@@ -208,22 +381,35 @@ class Users extends Component<Props, State> {
             <Fragment>
               users
               <br /><br />
-              count: {this.props.users.length}
+              count: {this.props.banned ? 0 : this.props.users.length}
               <br />
-              list:
-              <ul>
-                {this.props.users.map(user => (
-                  <li>
-                    {user.email}
-                    {user.siteAdmin && (
-                      <AdminBadge>admin</AdminBadge>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <Button onClick={() => this.props.fetchUsers()}>
-                refresh
-              </Button>
+              {
+                this.props.banned ? (
+                  <Fragment>
+                    access denied. you are banned
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    list:
+                    <ul>
+                      {this.props.users.map(user => (
+                        <li>
+                          {user.username} {user.email && `(${user.email})`}
+                          {user.siteAdmin && (
+                            <AdminBadge>admin</AdminBadge>
+                          )}
+                          {user.banned && (
+                            <AdminBadge>banned</AdminBadge>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button onClick={() => this.props.fetchUsers()}>
+                      refresh
+                    </Button>
+                  </Fragment>
+                )
+              }
             </Fragment>
           )}
         </Paragraph>
@@ -250,6 +436,56 @@ class Users extends Component<Props, State> {
             onClick={event => this.loginAsUser(event)}
           >
             {this.state.loginButton.text}
+          </Button>
+        </Paragraph>
+        <br />
+        <Paragraph>
+          ban user
+          <br /><br />
+          {this.state.banError && <Error>{this.state.banError}</Error>}
+          {this.state.banInfo && <Info>{this.state.banInfo}</Info>}
+          username or email
+          <br />
+          <Input
+            type='text'
+            name='banUsername'
+            minLength={3}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.banUsername = input}
+            required
+          />
+          <br /><br />
+          <ButtonRed
+            type='submit'
+            disabled={this.state.banButton.disabled}
+            onClick={event => this.banUser(event)}
+          >
+            {this.state.banButton.text}
+          </ButtonRed>
+        </Paragraph>
+        <br />
+        <Paragraph>
+          unban user
+          <br /><br />
+          {this.state.unbanError && <Error>{this.state.unbanError}</Error>}
+          {this.state.unbanInfo && <Info>{this.state.unbanInfo}</Info>}
+          username or email
+          <br />
+          <Input
+            type='text'
+            name='unbanUsername'
+            minLength={3}
+            maxLength={320}
+            ref={(input: HTMLInputElement) => this.unbanUsername = input}
+            required
+          />
+          <br /><br />
+          <Button
+            type='submit'
+            disabled={this.state.unbanButton.disabled}
+            onClick={event => this.unbanUser(event)}
+          >
+            {this.state.unbanButton.text}
           </Button>
         </Paragraph>
         <br />

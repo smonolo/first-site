@@ -4,6 +4,7 @@ export type AuthState = {
   username: string,
   email: string,
   siteAdmin: boolean,
+  banned: boolean,
   jwt: string
 };
 
@@ -23,5 +24,6 @@ export interface LoginResponse {
     readonly username: string;
     readonly email: string;
     readonly siteAdmin: boolean;
+    readonly banned: boolean;
   };
 }

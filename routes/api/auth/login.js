@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
           { username },
           { email: username.toLowerCase() }
         ]
-      }).select('_id username email password siteAdmin');
+      }).select('_id username email password siteAdmin banned');
     } catch (error) {
       return internalError(res);
     }
@@ -66,7 +66,8 @@ router.post('/', async (req, res) => {
       id: user._id,
       username: user.username,
       email: user.email,
-      siteAdmin: user.siteAdmin
+      siteAdmin: user.siteAdmin,
+      banned: user.banned
     };
 
     const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);

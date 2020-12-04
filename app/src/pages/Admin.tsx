@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 
 import { titles } from '../constants';
 
-import { AuthState, isLogged, isSiteAdmin, login, logout } from '../redux/auth';
+import { AuthState, isLogged, isSiteAdmin, isBanned, login, logout } from '../redux/auth';
 import { AdminUser, fetchUsers, getUsers } from '../redux/admin';
 import { getGitCommit, GitCommit } from '../redux/app';
 
@@ -18,6 +18,7 @@ import Loading from '../components/Loading';
 interface Props {
   readonly logged: boolean;
   readonly siteAdmin: boolean;
+  readonly banned: boolean;
   readonly fetchUsers: Function;
   readonly users: Array<AdminUser>;
   readonly login: (payload: AuthState) => void;
@@ -67,7 +68,10 @@ class Admin extends Component<Props, State> {
 
     return (
       <Base title={this.title}>
-        <Info gitCommit={this.props.gitCommit} />
+        <Info
+          gitCommit={this.props.gitCommit}
+          banned={this.props.banned}
+        />
         <br />
         <Users
           loading={this.state.loading}
@@ -75,9 +79,12 @@ class Admin extends Component<Props, State> {
           login={this.props.login}
           logout={this.props.logout}
           fetchUsers={this.props.fetchUsers}
+          banned={this.props.banned}
         />
         <br />
-        <SiteAdmins />
+        <SiteAdmins
+          banned={this.props.banned}
+        />
       </Base>
     );
   };
@@ -86,9 +93,10 @@ class Admin extends Component<Props, State> {
 const mapStateToProps = createSelector(
   isLogged,
   isSiteAdmin,
+  isBanned,
   getUsers,
   getGitCommit,
-  (logged, siteAdmin, users, gitCommit) => ({ logged, siteAdmin, users, gitCommit })
+  (logged, siteAdmin, banned, users, gitCommit) => ({ logged, siteAdmin, banned, users, gitCommit })
 );
 
 const mapDispatchToProps = {

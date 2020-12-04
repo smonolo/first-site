@@ -89,7 +89,8 @@ router.post('/', async (req, res) => {
       username,
       email: finalEmail,
       password: finalPassword,
-      siteAdmin: false
+      siteAdmin: false,
+      banned: false
     };
 
     try {
@@ -102,7 +103,8 @@ router.post('/', async (req, res) => {
       id,
       username: userDocument.username,
       email: finalEmail,
-      siteAdmin: userDocument.siteAdmin
+      siteAdmin: userDocument.siteAdmin,
+      banned: userDocument.banned
     };
 
     const jwtValue = jwt.sign(jwtContent, process.env.STEMON_JWT_TOKEN);

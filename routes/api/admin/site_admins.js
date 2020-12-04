@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 
   try {
     jwt.verify(req.body.payload.jwt, process.env.STEMON_JWT_TOKEN, async (err, result) => {
-      if (err || !result.siteAdmin) {
+      if (err || !result.siteAdmin || result.banned) {
         return error(res, 'not authorized');
       }
 

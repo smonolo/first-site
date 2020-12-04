@@ -5,12 +5,13 @@ import { UserNavigation, UserNavigationLink, UserNavigationName } from '../../st
 interface Props {
   readonly username: string;
   readonly siteAdmin: boolean;
+  readonly banned: boolean;
 }
 
-export default ({ username, siteAdmin }: Props) => (
+export default ({ username, siteAdmin, banned }: Props) => (
   <Fragment>
     <UserNavigation>
-      {siteAdmin && (
+      {siteAdmin && !banned && (
         <UserNavigationLink to='/admin'>
           admin
         </UserNavigationLink>

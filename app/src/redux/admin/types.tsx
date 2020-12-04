@@ -1,6 +1,8 @@
 export interface AdminUser {
+  readonly username: string;
   readonly email: string;
   readonly siteAdmin: boolean;
+  readonly banned: boolean;
 }
 
 export type AdminState = {

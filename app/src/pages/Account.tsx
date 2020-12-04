@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
@@ -313,6 +313,17 @@ class Account extends Component<Props, State> {
 
     return (
       <Base title={this.title}>
+        {this.props.auth.banned && (
+          <Fragment>
+            <Paragraph>
+              your account is currently
+              <AdminBadge>
+                banned
+              </AdminBadge>
+            </Paragraph>
+            <br />
+          </Fragment>
+        )}
         <Paragraph>
           hi {this.props.auth.username}
           {this.props.auth.siteAdmin && (

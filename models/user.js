@@ -5,7 +5,14 @@ const UserSchema = new mongoose.Schema({
   username: String,
   email: String,
   password: String,
-  siteAdmin: Boolean
+  siteAdmin: {
+    type: Boolean,
+    default: false
+  },
+  banned: {
+    type: Boolean,
+    default: false
+  }
 }, {
   collection: 'users',
   versionKey: false
