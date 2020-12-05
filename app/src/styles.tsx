@@ -87,6 +87,34 @@ export const ButtonRed = styled(Button)`
   background-color: #ff0000;
 `;
 
+export const Dropdown = styled.div`
+  position: absolute;
+  width: 200px;
+  display: none;
+  right: 0;
+  background-color: ${light ? '#000000' : '#ffffff'};
+  margin-top: 10px;
+  padding: 5px;
+`;
+
+export const DropdownLink = styled(Link)`
+  text-decoration: none;
+`;
+
+export const DropdownItem = styled.div<any>`
+  width: 100%;
+  box-sizing: border-box;
+  color: ${light ? '#ffffff' : '#000000'};
+  padding: 2px 5px;
+  cursor: pointer;
+  margin-bottom: ${(props: any) => props.noBottom ? '0' : '5px'};
+
+  &:hover {
+    background-color: ${(props: any) => props.logout ? '#ff0000' : (light ? '#ffffff' : '#000000')};
+    color: ${(props: any) => props.logout ? '#ffffff' : (light ? '#000000' : '#ffffff')};
+  }
+`;
+
 export const Error = styled.div`
   padding: 6px 10px;
   width: 100%;
@@ -123,6 +151,12 @@ export const Mail = styled.a`
   &:hover {
     color: #ffffff;
   }
+`;
+
+export const NavigationContainer = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 export const NavigationLink = styled(Link)`
@@ -168,6 +202,14 @@ export const Paragraph = styled.div`
   box-sizing: border-box;
 `;
 
+export const ToolContainer = styled.div`
+  padding: 20px;
+  background-color: ${light ? '#ffffff' : '#111111'};
+  width: 100%;
+  box-sizing: border-box;
+  color: ${light ? '#000000' : '#ffffff'};
+`;
+
 export const SearchInput = styled(Input)`
   margin-top: 0;
   background-color: ${light ? '#ffffff' : '#111111'};
@@ -195,35 +237,11 @@ export const Title = styled.div`
   color: ${light ? '#000000' : '#ffffff'};
 `;
 
-export const UserNavigation = styled.div`
-  padding: 10px 15px;
-  background-color: ${light ? '#ffffff' : '#111111'};
-  width: 100%;
-  box-sizing: border-box;
-`;
-
-export const UserNavigationLink = styled(Link)`
-  color: ${light ? '#000000' : '#ffffff'};
-  margin-right: 12px;
-  text-decoration: none;
-  
-  &:hover {
-    color: ${light ? '#000000' : '#ffffff'};
-  }
-  
-  &:last-child {
-    margin-right: 0;
-  }
-`;
-
-export const UserNavigationName = styled(Link)`
+export const UserNavigationName = styled.span`
   color: #ffffff;
   float: right;
   background-color: ${mainColor};
   padding: 0 6px;
   text-decoration: none;
-  
-  &:hover {
-    color: #ffffff;
-  }
+  cursor: pointer;
 `;

@@ -1,14 +1,12 @@
-import React, { Component, createRef, Fragment } from 'react';
+import React, { Component, createRef } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import validator from 'validator';
 
-import { allowedEmailChars } from '../../constants';
+import { ApiResponse } from '../../types';
+import { isUsernameEmailInvalid } from '../../utils/form';
 
-import { Button, ButtonRed, Error, Info, Input, Paragraph } from '../../styles';
+import { Button, ButtonRed, Error, Info, Input, Paragraph, ToolContainer } from '../../styles';
 
-interface Props {
-  readonly banned: boolean
-}
+type Props = {};
 
 type State = {
   assignError: string,
@@ -24,11 +22,6 @@ type State = {
     disabled: boolean
   }
 };
-
-interface SiteAdminResponse {
-  readonly success: boolean;
-  readonly error?: string;
-}
 
 class SiteAdmins extends Component<Props, State> {
   private assignUsername: any = createRef();
@@ -62,6 +55,14 @@ class SiteAdmins extends Component<Props, State> {
         disabled: false
       }
     });
+
+    if (!assignError) {
+      this.assignUsername.value = '';
+
+      setTimeout(() => {
+        this.setState({ assignInfo: '' });
+      }, 5000);
+    }
   };
 
   setRevokeFormData(revokeError: string = '', revokeInfo: string = '') {
@@ -73,6 +74,14 @@ class SiteAdmins extends Component<Props, State> {
         disabled: false
       }
     });
+
+    if (!revokeError) {
+      this.revokeUsername.value = '';
+
+      setTimeout(() => {
+        this.setState({ revokeInfo: '' });
+      }, 5000);
+    }
   };
 
   async assignSiteAdmin(event: any) {
@@ -87,47 +96,25 @@ class SiteAdmins extends Component<Props, State> {
       }
     });
 
-    const assignUsernameValue: string = validator.unescape(validator.trim(this.assignUsername.value));
+    const invalid = isUsernameEmailInvalid(this.assignUsername.value);
 
-    if (this.props.banned) {
-      return this.setAssignFormData('you are currently banned');
+    if (invalid) {
+      return this.setAssignFormData(invalid);
     }
-
-    if (!assignUsernameValue) {
-      return this.setAssignFormData('username is missing');
-    }
-
-    if (assignUsernameValue.length < 3) {
-      return this.setAssignFormData('username is too short');
-    }
-
-    if (assignUsernameValue.length > 320) {
-      return this.setAssignFormData('username is too long');
-    }
-
-    if (!assignUsernameValue.match(allowedEmailChars)) {
-      return this.setAssignFormData('username contains invalid characters');
-    }
-
-    this.assignUsername.value = '';
 
     const request: AxiosResponse = await axios.post('/api/admin/site-admins', {
       auth: 'adminSiteAdmins',
       type: 'assignSiteAdmin',
       payload: {
-        username: assignUsernameValue,
-        jwt: localStorage.getItem('jwt')
+        jwt: localStorage.getItem('jwt'),
+        username: this.assignUsername.value
       }
     });
 
-    const data: SiteAdminResponse = request.data;
+    const data: ApiResponse = request.data;
 
     if (data.success && !data.error) {
       this.setAssignFormData('', 'site admin assigned');
-
-      setTimeout(() => {
-        this.setState({ assignInfo: '' });
-      }, 5000);
     } else {
       this.setAssignFormData(data.error);
     }
@@ -145,43 +132,25 @@ class SiteAdmins extends Component<Props, State> {
       }
     });
 
-    const revokeUsernameValue: string = validator.unescape(validator.trim(this.revokeUsername.value));
+    const invalid = isUsernameEmailInvalid(this.revokeUsername.value);
 
-    if (!revokeUsernameValue) {
-      return this.setRevokeFormData('username is missing');
+    if (invalid) {
+      return this.setRevokeFormData(invalid);
     }
-
-    if (revokeUsernameValue.length < 3) {
-      return this.setRevokeFormData('username is too short');
-    }
-
-    if (revokeUsernameValue.length > 320) {
-      return this.setRevokeFormData('username is too long');
-    }
-
-    if (!revokeUsernameValue.match(allowedEmailChars)) {
-      return this.setRevokeFormData('username contains invalid characters');
-    }
-
-    this.revokeUsername.value = '';
 
     const request: AxiosResponse = await axios.post('/api/admin/site-admins', {
       auth: 'adminSiteAdmins',
       type: 'revokeSiteAdmin',
       payload: {
-        username: revokeUsernameValue,
-        jwt: localStorage.getItem('jwt')
+        jwt: localStorage.getItem('jwt'),
+        username: this.revokeUsername.value
       }
     });
 
-    const data: SiteAdminResponse = request.data;
+    const data: ApiResponse = request.data;
 
     if (data.success && !data.error) {
       this.setRevokeFormData('', 'site admin revoked');
-
-      setTimeout(() => {
-        this.setState({ revokeInfo: '' });
-      }, 5000);
     } else {
       this.setRevokeFormData(data.error);
     }
@@ -189,7 +158,9 @@ class SiteAdmins extends Component<Props, State> {
 
   render() {
     return (
-      <Fragment>
+      <ToolContainer>
+        site admins
+        <br /><br />
         <Paragraph>
           assign site admin
           <br /><br />
@@ -239,7 +210,7 @@ class SiteAdmins extends Component<Props, State> {
             {this.state.revokeButton.text}
           </ButtonRed>
         </Paragraph>
-      </Fragment>
+      </ToolContainer>
     );
   };
 }

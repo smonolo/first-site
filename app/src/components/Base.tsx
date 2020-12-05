@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 
-import Navigation from './navigation/Navigation';
+import Navigation from './Navigation';
 import Search from './Search';
 
 import { Box, Container, NavBox, Text, Title } from '../styles';
@@ -19,6 +19,8 @@ export default ({ title, children }: Props) => {
       </Helmet>
       <Container>
         <NavBox>
+          <Navigation />
+          <br />
           <Search />
         </NavBox>
         <br />
@@ -29,10 +31,6 @@ export default ({ title, children }: Props) => {
             {children}
           </Text>
         </Box>
-        <br />
-        <NavBox>
-          <Navigation />
-        </NavBox>
       </Container>
     </Fragment>
   );

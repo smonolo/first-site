@@ -4,87 +4,51 @@ import { createSelector } from 'reselect';
 
 import { titles } from '../constants';
 
-import { AuthState, isLogged, isSiteAdmin, isBanned, login, logout } from '../redux/auth';
-import { AdminUser, fetchUsers, getUsers } from '../redux/admin';
-import { getGitCommit, GitCommit } from '../redux/app';
+import { isLogged, isSiteAdmin, isBanned } from '../redux/auth';
 
 import SiteAdmins from '../components/admin/SiteAdmins';
 import Users from '../components/admin/Users';
 import Info from '../components/admin/Info';
+import DeleteUser from '../components/admin/DeleteUser';
+import Bans from '../components/admin/Bans';
 
 import Base from '../components/Base';
 import Loading from '../components/Loading';
+import LoginUser from '../components/admin/LoginUser';
 
 interface Props {
   readonly logged: boolean;
   readonly siteAdmin: boolean;
   readonly banned: boolean;
-  readonly fetchUsers: Function;
-  readonly users: Array<AdminUser>;
-  readonly login: (payload: AuthState) => void;
-  readonly logout: Function;
-  readonly gitCommit: GitCommit;
 }
 
-type State = {
-  loading: boolean
-};
-
-class Admin extends Component<Props, State> {
+class Admin extends Component<Props> {
   private title: string = titles.admin;
 
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      loading: false
-    };
-  };
-
-  componentDidMount() {
-    if (!this.props.logged || !this.props.siteAdmin) {
-      return window.location.assign('/');
-    }
-
-    this.props.fetchUsers();
-  };
-
-  componentDidUpdate(nextProps: Readonly<Props>) {
-    if (!this.props.logged || !this.props.siteAdmin) {
-      return window.location.assign('/');
-    }
-
-    if (nextProps.users !== this.props.users) {
-      this.setState({
-        loading: false
-      });
-    }
+  isAuthorized = () => {
+    return this.props.logged && this.props.siteAdmin && !this.props.banned;
   };
 
   render() {
-    if (!this.props.logged || !this.props.siteAdmin) {
+    if (!this.isAuthorized()) {
       return <Loading />;
     }
 
     return (
-      <Base title={this.title}>
-        <Info
-          gitCommit={this.props.gitCommit}
-          banned={this.props.banned}
-        />
+      <Base
+        title={this.title}
+      >
+        <Info />
         <br />
-        <Users
-          loading={this.state.loading}
-          users={this.props.users}
-          login={this.props.login}
-          logout={this.props.logout}
-          fetchUsers={this.props.fetchUsers}
-          banned={this.props.banned}
-        />
+        <Users />
         <br />
-        <SiteAdmins
-          banned={this.props.banned}
-        />
+        <LoginUser />
+        <br />
+        <Bans />
+        <br />
+        <SiteAdmins />
+        <br />
+        <DeleteUser />
       </Base>
     );
   };
@@ -94,15 +58,7 @@ const mapStateToProps = createSelector(
   isLogged,
   isSiteAdmin,
   isBanned,
-  getUsers,
-  getGitCommit,
-  (logged, siteAdmin, banned, users, gitCommit) => ({ logged, siteAdmin, banned, users, gitCommit })
+  (logged, siteAdmin, banned) => ({ logged, siteAdmin, banned })
 );
 
-const mapDispatchToProps = {
-  fetchUsers,
-  login,
-  logout
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Admin);
+export default connect(mapStateToProps)(Admin);
