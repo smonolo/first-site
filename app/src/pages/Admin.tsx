@@ -11,10 +11,11 @@ import Users from '../components/admin/Users';
 import Info from '../components/admin/Info';
 import DeleteUser from '../components/admin/DeleteUser';
 import Bans from '../components/admin/Bans';
+import LoginUser from '../components/admin/LoginUser';
+import Status from '../components/admin/Status';
 
 import Base from '../components/Base';
 import Loading from '../components/Loading';
-import LoginUser from '../components/admin/LoginUser';
 
 interface Props {
   readonly logged: boolean;
@@ -39,6 +40,8 @@ class Admin extends Component<Props> {
         title={this.title}
       >
         <Info />
+        <br />
+        <Status />
         <br />
         <Users />
         <br />

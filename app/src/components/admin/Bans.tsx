@@ -23,7 +23,7 @@ type State = {
   }
 };
 
-class Users extends Component<Props, State> {
+class Bans extends Component<Props, State> {
   private banUsername: any = createRef();
   private unbanUsername: any = createRef();
 
@@ -215,4 +215,4 @@ class Users extends Component<Props, State> {
   };
 }
 
-export default Users;
+export default Bans;
