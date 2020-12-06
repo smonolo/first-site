@@ -51,36 +51,39 @@ class Users extends Component<Props, State> {
   render() {
     return (
       <Paragraph>
-        {this.state.loading && 'loading users...'}
-        {!this.state.loading && (
-          <Fragment>
-            users
-            <br /><br />
-            count: {this.props.users.length}
-            <br />
-            list:
-            <ul>
-              {this.props.users.map((user: AdminUser, index: number) => (
-                <li
-                  key={`admin-users-${index}`}
-                >
-                  {user.username} {user.email && `(${user.email})`}
-                  {user.siteAdmin && (
-                    <AdminBadge>admin</AdminBadge>
-                  )}
-                  {user.banned && (
-                    <AdminBadge>banned</AdminBadge>
-                  )}
-                </li>
-              ))}
-            </ul>
-            <Button
-              onClick={event => this.fetchUsers(event)}
-            >
-              refresh
-            </Button>
-          </Fragment>
-        )}
+        users
+        <br /><br />
+        {
+          this.state.loading ? (
+            'loading users...'
+          ) : (
+            <Fragment>
+              count: {this.props.users.length}
+              <br />
+              list:
+              <ul>
+                {this.props.users.map((user: AdminUser, index: number) => (
+                  <li
+                    key={`admin-users-${index}`}
+                  >
+                    {user.username} {user.email && `(${user.email})`}
+                    {user.siteAdmin && (
+                      <AdminBadge>admin</AdminBadge>
+                    )}
+                    {user.banned && (
+                      <AdminBadge>banned</AdminBadge>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                onClick={event => this.fetchUsers(event)}
+              >
+                refresh
+              </Button>
+            </Fragment>
+          )
+        }
       </Paragraph>
     );
   };

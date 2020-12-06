@@ -1,38 +1,72 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import https from 'https';
 
-import { Paragraph } from '../../styles';
+import { Paragraph, Button, GreenBadge, AdminBadge } from '../../styles';
 
 type Props = {};
 
-type Service = {
-  [x: string]: boolean
-};
-
 type State = {
-  services: Array<Service>
+  loading: boolean,
+  services: {
+    [service: string]: {
+      online: boolean,
+      statusCode: number
+    }
+  }
 };
 
-const services = [
-  'https://stemon.me/',
-  'https://images.stemon.me/',
-  'https://api.stemon.me'
+const services: Array<string> = [
+  'images.stemon.me',
+  'api.stemon.me'
 ];
 
 class Status extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      services: {}
+    };
+  };
+
   componentDidMount() {
     this.checkServices();
   };
 
   checkServices = () => {
+    this.setState({
+      loading: true
+    });
+
     services.forEach(service => {
       https
-        .get(service, res => {
-          console.log(res);
+        .get(`https://${service}/`, res => {
+          this.setState({
+            services: {
+              ...this.state.services,
+              [service]: {
+                online: true,
+                statusCode: res.statusCode || -1
+              }
+            }
+          });
         })
-        .on('error', error => {
-          console.log(error);
+        .on('error', () => {
+          this.setState({
+            services: {
+              ...this.state.services,
+              [service]: {
+                online: false,
+                statusCode: -1
+              }
+            }
+          });
         });
+    });
+
+    this.setState({
+      loading: false
     });
   };
 
@@ -41,7 +75,41 @@ class Status extends Component<Props, State> {
       <Paragraph>
         status
         <br /><br />
-        working
+        {
+          this.state.loading ? (
+            'loading services...'
+          ) : (
+            <Fragment>
+              {Object.keys(this.state.services).map((service: string, index: number) => (
+                <div key={`admin-status-${index}`}>
+                  {service}:
+                  {
+                    this.state.services[service].online ? (
+                      <GreenBadge>
+                        online
+                      </GreenBadge>
+                    ) : (
+                      <AdminBadge>
+                        offline
+                      </AdminBadge>
+                    )
+                  }
+                  &nbsp;({this.state.services[service].statusCode})
+                </div>
+              ))}
+              <br />
+              <Button
+                onClick={event => {
+                  event.preventDefault();
+
+                  this.checkServices();
+                }}
+              >
+                refresh
+              </Button>
+            </Fragment>
+          )
+        }
       </Paragraph>
     );
   };

@@ -1,17 +1,22 @@
 import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+
+import { isBanned } from '../redux/auth';
 
 import Navigation from './Navigation';
 import Search from './Search';
 
-import { Box, Container, NavBox, Text, Title } from '../styles';
+import { Box, Container, NavBox, Text, Title, RedBanner } from '../styles';
 
-interface Props {
-  readonly title: string;
-  readonly children: any;
-}
+type Props = {
+  title: string,
+  banned: boolean,
+  children: any
+};
 
-export default ({ title, children }: Props) => {
+const Base = ({ title, banned, children }: Props) => {
   return (
     <Fragment>
       <Helmet>
@@ -24,6 +29,14 @@ export default ({ title, children }: Props) => {
           <Search />
         </NavBox>
         <br />
+        {banned && (
+          <Fragment>
+            <RedBanner>
+              your account is currently banned, you must have done something weird...
+            </RedBanner>
+            <br />
+          </Fragment>
+        )}
         <Box>
           <Text>
             <Title>{title}</Title>
@@ -35,3 +48,10 @@ export default ({ title, children }: Props) => {
     </Fragment>
   );
 };
+
+const mapStateToProps = createSelector(
+  isBanned,
+  banned => ({ banned })
+);
+
+export default connect(mapStateToProps)(Base);

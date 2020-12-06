@@ -31,11 +31,19 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export const AdminBadge = styled.span`
+export const Badge = styled.span`
+  margin-left: 10px;
+  padding: 0 6px;
+`;
+
+export const AdminBadge = styled(Badge)`
   color: #ffffff;
   background-color: #ff0000;
-  padding: 0 6px;
-  margin-left: 10px;
+`;
+
+export const GreenBadge = styled(Badge)`
+  color: #ffffff;
+  background-color: #228b22;
 `;
 
 export const Anchor = styled.a`
@@ -58,6 +66,17 @@ export const Box = styled.div`
   width: 100%;
   background-color: ${light ? '#eeeeee' : '#222222'};
   box-sizing: border-box;
+`;
+
+export const Banner = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 50px;
+`;
+
+export const RedBanner = styled(Banner)`
+  background-color: #ff0000;
+  color: #ffffff;
 `;
 
 export const NavBox = styled(Box)`
