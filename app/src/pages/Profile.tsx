@@ -61,7 +61,7 @@ class Profile extends Component<Props, State> {
           error: ''
         });
 
-        const request: AxiosResponse = await axios.post('http://localhost:57484/api/profile', {
+        const request: AxiosResponse = await axios.post('https://api.stemon.me/api/profile', {
           auth: 'profile',
           type: 'getProfile',
           payload: {

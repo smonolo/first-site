@@ -158,7 +158,7 @@ class Account extends Component<Props, State> {
 
     this.updateUsername.value = '';
 
-    const request: AxiosResponse = await axios.post('http://localhost:57484/api/auth/account', {
+    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/auth/account', {
       auth: 'authAccount',
       type: 'updateUsername',
       payload: {
@@ -220,7 +220,7 @@ class Account extends Component<Props, State> {
 
     this.updateEmail.value = '';
 
-    const request: AxiosResponse = await axios.post('http://localhost:57484/api/auth/account', {
+    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/auth/account', {
       auth: 'authAccount',
       type: 'updateEmail',
       payload: {
@@ -282,7 +282,7 @@ class Account extends Component<Props, State> {
 
     this.deleteUsername.value = '';
 
-    const request: AxiosResponse = await axios.post('http://localhost:57484/api/auth/account', {
+    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/auth/account', {
       auth: 'authAccount',
       type: 'deleteAccount',
       payload: {
