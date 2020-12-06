@@ -11,7 +11,7 @@ interface RequestData {
 }
 
 export const fetchUsers = () => async (dispatch: AdminDispatch) => {
-  const request: AxiosResponse = await axios.post('/api/admin/users', {
+  const request: AxiosResponse = await axios.post('http://localhost:57484/api/admin/users', {
     auth: 'adminUsers',
     type: 'getEmailsList',
     payload: {

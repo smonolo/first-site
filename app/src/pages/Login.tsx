@@ -115,7 +115,7 @@ class Login extends Component<Props, State> {
     this.username.value = '';
     this.password.value = '';
 
-    const request: AxiosResponse = await axios.post('/api/auth/login', {
+    const request: AxiosResponse = await axios.post('http://localhost:57484/api/auth/login', {
       auth: 'authLogin',
       type: 'login',
       payload: {

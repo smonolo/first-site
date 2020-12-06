@@ -66,7 +66,7 @@ class Navigation extends Component<Props> {
   };
 
   verifyJwt = async () => {
-    const request: AxiosResponse = await axios.post('/api/auth/verify', {
+    const request: AxiosResponse = await axios.post('http://localhost:57484/api/auth/verify', {
       auth: 'authVerify',
       type: 'verify',
       payload: {

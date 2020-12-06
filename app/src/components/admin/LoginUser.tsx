@@ -82,7 +82,7 @@ class LoginUser extends Component<Props, State> {
       return this.setFormData(invalid);
     }
 
-    const request: AxiosResponse = await axios.post('/api/admin/users', {
+    const request: AxiosResponse = await axios.post('http://localhost:57484/api/admin/users', {
       auth: 'adminUsers',
       type: 'loginAsUser',
       payload: {
