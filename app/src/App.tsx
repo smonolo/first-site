@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
+import Snowfall from 'react-snowfall';
 
 import { pages, Page } from './constants';
 
@@ -50,6 +51,9 @@ class App extends Component<Props> {
     return (
       <BrowserRouter>
         <GlobalStyle/>
+        <Snowfall
+          snowflakeCount={50}
+        />
         <Switch>
           {pages.map((page: Page, index: number) => (
             <Route
