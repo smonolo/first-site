@@ -102,7 +102,7 @@ class SiteAdmins extends Component<Props, State> {
       return this.setAssignFormData(invalid);
     }
 
-    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/admin/site-admins', {
+    const request: AxiosResponse = await axios.post('/api/admin/site-admins', {
       auth: 'adminSiteAdmins',
       type: 'assignSiteAdmin',
       payload: {
@@ -138,7 +138,7 @@ class SiteAdmins extends Component<Props, State> {
       return this.setRevokeFormData(invalid);
     }
 
-    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/admin/site-admins', {
+    const request: AxiosResponse = await axios.post('/api/admin/site-admins', {
       auth: 'adminSiteAdmins',
       type: 'revokeSiteAdmin',
       payload: {

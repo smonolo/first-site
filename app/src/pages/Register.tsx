@@ -148,7 +148,7 @@ class Register extends Component<Props, State> {
     this.password.value = '';
     this.repeatPassword.value = '';
 
-    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/auth/register', {
+    const request: AxiosResponse = await axios.post('/api/auth/register', {
       auth: 'authRegister',
       type: 'register',
       payload: {

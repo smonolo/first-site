@@ -102,7 +102,7 @@ class Bans extends Component<Props, State> {
       return this.setBanFormData(invalid);
     }
 
-    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/admin/users', {
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
       auth: 'adminUsers',
       type: 'banUser',
       payload: {
@@ -138,7 +138,7 @@ class Bans extends Component<Props, State> {
       return this.setUnbanFormData(invalid);
     }
 
-    const request: AxiosResponse = await axios.post('https://api.stemon.me/api/admin/users', {
+    const request: AxiosResponse = await axios.post('/api/admin/users', {
       auth: 'adminUsers',
       type: 'unbanUser',
       payload: {

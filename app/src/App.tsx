@@ -25,7 +25,7 @@ class App extends Component<Props> {
 
     setInterval(async () => {
       if (this.props.logged && localStorage.getItem('jwt')) {
-        const request: AxiosResponse = await axios.post('https://api.stemon.me/api/auth/verify', {
+        const request: AxiosResponse = await axios.post('/api/auth/verify', {
           auth: 'authVerify',
           type: 'refresh',
           payload: {
