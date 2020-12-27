@@ -16,8 +16,7 @@ type State = {
 };
 
 const services: Array<string> = [
-  'images.stemon.me',
-  'api.stemon.me'
+  'cdn.stemon.me'
 ];
 
 class Status extends Component<Props, State> {
