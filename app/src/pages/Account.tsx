@@ -4,7 +4,12 @@ import { createSelector } from 'reselect';
 import axios, { AxiosResponse } from 'axios';
 import validator from 'validator';
 
-import { allowedEmailChars, allowedUsernameChars, titles } from '../constants';
+import {
+  allowedEmailChars,
+  allowedUsernameChars,
+  titles,
+  disallowedUsernames
+} from '../constants';
 
 import { isLogged, logout, getAuth, AuthState } from '../redux/auth';
 
@@ -150,6 +155,10 @@ class Account extends Component<Props, State> {
 
     if (!updateUsernameValue.match(allowedUsernameChars)) {
       return this.setUpdateFormData('username contains invalid characters');
+    }
+
+    if (disallowedUsernames.includes(updateUsernameValue)) {
+      return this.setUpdateFormData('username is not allowed');
     }
 
     if (updateUsernameValue === this.props.auth.username) {

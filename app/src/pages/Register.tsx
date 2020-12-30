@@ -4,7 +4,13 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import validator from 'validator';
 
-import { allowedEmailChars, allowedPasswordChars, allowedUsernameChars, titles } from '../constants';
+import {
+  allowedEmailChars,
+  allowedPasswordChars,
+  allowedUsernameChars,
+  titles,
+  disallowedUsernames
+} from '../constants';
 
 import { AuthState, isLogged, login, LoginResponse } from '../redux/auth';
 
@@ -98,6 +104,10 @@ class Register extends Component<Props, State> {
 
     if (!usernameValue.match(allowedUsernameChars)) {
       return this.setFormData('username contains invalid characters');
+    }
+
+    if (disallowedUsernames.includes(usernameValue)) {
+      return this.setFormData('username is not allowed');
     }
 
     if (!emailValue) {

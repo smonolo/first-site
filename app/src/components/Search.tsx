@@ -25,7 +25,7 @@ class Search extends Component {
       return;
     }
 
-    window.location.assign(`/profile/${searchValue}`);
+    window.location.assign(`/${searchValue}`);
   };
 
   render() {

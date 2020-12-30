@@ -7,6 +7,14 @@ const cors = require('cors');
 exports.allowedUsernameChars = /[A-Za-z0-9_]/g;
 exports.allowedEmailChars = /[A-Za-z0-9@_.]/g;
 exports.allowedPasswordChars = /[A-Za-z0-9/\\{}#,!_@():;.|`$=+\-*[\]^?&~%"']/g;
+exports.disallowedUsernames = [
+  'about',
+  'contact',
+  'login',
+  'register',
+  'admin',
+  'account'
+];
 
 const app = express();
 

@@ -68,8 +68,17 @@ export const pages: Pages = [
   { exact: true, path: '/register', component: Register },
   { exact: true, path: '/admin', component: Admin },
   { exact: true, path: '/account', component: Account },
-  { exact: true, path: '/profile/:username', component: Profile },
+  { exact: true, path: '/:username', component: Profile },
   { exact: true, path: '', component: NotFound }
+];
+
+export const disallowedUsernames: string[] = [
+  'about',
+  'contact',
+  'login',
+  'register',
+  'admin',
+  'account'
 ];
 
 export const allowedUsernameChars: RegExp = /[A-Za-z0-9_]/g;

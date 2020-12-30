@@ -6,7 +6,12 @@ const validator = require('validator');
 
 const User = require('mongoose').model('user');
 
-const { allowedUsernameChars, allowedEmailChars, allowedPasswordChars } = require('../../../app');
+const {
+  allowedUsernameChars,
+  allowedEmailChars,
+  allowedPasswordChars,
+  disallowedUsernames
+} = require('../../../app');
 const { error, internalError, invalidRequest } = require('../helpers');
 
 router.post('/', async (req, res) => {
@@ -57,6 +62,10 @@ router.post('/', async (req, res) => {
       !repeatPassword.match(allowedPasswordChars)
     ) {
       return error(res, 'username, email or password includes invalid characters');
+    }
+
+    if (disallowedUsernames.includes(username)) {
+      return error(res, 'username is not allowed');
     }
 
     if (password !== repeatPassword) {

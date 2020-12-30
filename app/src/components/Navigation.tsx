@@ -135,7 +135,7 @@ class Navigation extends Component<Props> {
                 </DropdownLink>
               )}
               <DropdownLink
-                to={`/profile/${this.props.auth.username}`}
+                to={`/${this.props.auth.username}`}
               >
                 <DropdownItem>
                   profile

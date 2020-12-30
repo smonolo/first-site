@@ -4,7 +4,7 @@ const validator = require('validator');
 
 const User = require('mongoose').model('user');
 
-const { allowedUsernameChars, allowedEmailChars } = require('../../../app');
+const { allowedUsernameChars, allowedEmailChars, disallowedUsernames } = require('../../../app');
 const { error, internalError, invalidRequest } = require('../helpers');
 
 router.post('/', (req, res) => {
@@ -75,6 +75,10 @@ router.post('/', (req, res) => {
 
         if (!username.match(allowedUsernameChars)) {
           return error(res, 'username contains invalid characters');
+        }
+
+        if (disallowedUsernames.includes(username)) {
+          return error(res, 'username is not allowed');
         }
 
         if (result.username === username) {
