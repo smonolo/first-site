@@ -28,7 +28,7 @@ export default () => {
         >
           esl
         </Anchor>
-        for&nbsp;
+        &nbsp;for&nbsp;
         <Anchor
           href='https://www.badlion.net'
           target='_blank'
