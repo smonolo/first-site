@@ -28,6 +28,21 @@ export default () => {
         >
           esl
         </Anchor>
+        for&nbsp;
+        <Anchor
+          href='https://www.badlion.net'
+          target='_blank'
+        >
+          badlion client
+        </Anchor>
+        <br /><br />
+        also working on&nbsp;
+        <Anchor
+          href='https://digicale.com'
+          target='_blank'
+        >
+          digicale
+        </Anchor>
         <br /><br />
         why does this site have accounts? idk was testing
       </Paragraph>
