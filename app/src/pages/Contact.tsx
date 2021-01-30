@@ -14,8 +14,8 @@ export default () => {
       <Paragraph>
         send me an email
         <br /><br />
-        <Mail href='mailto:hi@stemon.me'>
-          hi@stemon.me
+        <Mail href='mailto:stefano@stemon.me'>
+          stefano@stemon.me
         </Mail>
       </Paragraph>
     </Base>
