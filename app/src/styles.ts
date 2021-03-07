@@ -9,10 +9,11 @@ const light = !theme || theme !== 'dark';
 export const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Consolas', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
   }
 
   body {
-    user-select: none;
     margin: 0;
     padding: 0;
     background-color: ${light ? '#ffffff' : '#000000'};
