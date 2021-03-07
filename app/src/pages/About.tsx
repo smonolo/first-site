@@ -126,6 +126,14 @@ export default () => {
         </Anchor>
         <br />
         <Anchor
+          href='https://bienatiarredamenti.it'
+          target='_blank'
+        >
+          bienatiarredamenti.it
+        </Anchor>
+        &nbsp;(shut down)
+        <br />
+        <Anchor
           href='https://purox.me'
           target='_blank'
         >
