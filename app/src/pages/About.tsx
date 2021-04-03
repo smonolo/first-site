@@ -70,6 +70,13 @@ export default () => {
         </Anchor>
         <br />
         <Anchor
+          href='https://rails.digicale.com'
+          target='_blank'
+        >
+          rails.digicale.com
+        </Anchor>
+        <br />
+        <Anchor
           href='https://digicale.it'
           target='_blank'
         >
@@ -109,6 +116,13 @@ export default () => {
           target='_blank'
         >
           teamlegnanonuoto.it
+        </Anchor>
+        <br />
+        <Anchor
+          href='https://aresapparel.eu'
+          target='_blank'
+        >
+          aresapparel.eu
         </Anchor>
         <br />
         <Anchor
